@@ -36,14 +36,15 @@ SHARED_APPS = [
 ]
 INSTALLED_APPS = [
     # 'tenant_schemas',
-    # 'suit',
+    'suit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'core',
+    # 'teste'
 ]
 
 
@@ -80,7 +81,8 @@ ROOT_URLCONF = 'skalla.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
