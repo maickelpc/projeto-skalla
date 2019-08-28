@@ -44,9 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'pessoa',
     # 'teste'
 ]
-
 
 
 TENANT_APPS = ['teste']
@@ -66,14 +66,13 @@ MIDDLEWARE = [
 ]
 
 
-MIDDLEWARE_CLASSES = (
-    'tenant_schemas.middleware.TenantMiddleware',
-)
+# MIDDLEWARE_CLASSES = (
+#    'tenant_schemas.middleware.TenantMiddleware',
+# )
 
-DATABASE_ROUTERS = (
-    'tenant_schemas.routers.TenantSyncRouter',
-)
-
+# DATABASE_ROUTERS = (
+#    'tenant_schemas.routers.TenantSyncRouter',
+# )
 
 
 ROOT_URLCONF = 'skalla.urls'
@@ -109,11 +108,11 @@ DATABASES = {
 
     #Instalar pacote psycopg2-binary para funcionar
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'ENGINE': 'tenant_schemas.postgresql_backend',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'ENGINE': 'tenant_schemas.postgresql_backend',
         'NAME': 'skalla',
-        'USER': 'dev',
-        'PASSWORD': 'dev',
+        'USER': 'postgres',
+        'PASSWORD': 'walnutcouch',
         'HOST': '127.0.0.1',
         'PORT': '5432',  # 8000 is default
     }
