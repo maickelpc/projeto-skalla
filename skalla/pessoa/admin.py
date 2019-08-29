@@ -13,6 +13,10 @@ class UsuarioAdminInline(admin.TabularInline):
     model = Usuario
     extra = 0
 
+class PessoaAdminInline(admin.StackedInline):
+    model = Pessoa
+    extra = 0
+
 
 class PessoaAdmin(admin.ModelAdmin):
     search_fields = ['nome', 'cpf_cnpj']

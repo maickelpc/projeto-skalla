@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'pessoa',
+    'empresa'
     # 'teste'
 ]
 
@@ -111,8 +112,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         #'ENGINE': 'tenant_schemas.postgresql_backend',
         'NAME': 'skalla',
-        'USER': 'postgres',
-        'PASSWORD': 'walnutcouch',
+        'USER': 'dev',
+        'PASSWORD': 'dev',
         'HOST': '127.0.0.1',
         'PORT': '5432',  # 8000 is default
     }
@@ -151,4 +152,4 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
