@@ -1,4 +1,5 @@
 from django.contrib import admin
+from pessoa.forms import UsuarioForm
 
 # Register your models here.
 from pessoa.models import Pessoa, Cliente, Usuario
@@ -33,6 +34,7 @@ admin.site.register(Cliente, ClienteAdmin)
 
 class UsuarioAdmin(admin.ModelAdmin):
     search_fields = ['email', 'ativo']
+    form = UsuarioForm
 
 
 admin.site.register(Usuario, UsuarioAdmin)
