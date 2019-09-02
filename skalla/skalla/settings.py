@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+from decouple import config
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -20,14 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-b2x5xi!l!cpxywmmp#$%qvkmczyt9+&5no$-isbrw!q&qad*n'
+SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
-
-
+ALLOWED_HOSTS = [config('ALLOWED_HOSTS')]
 
 
 # Application definition
@@ -102,20 +99,14 @@ WSGI_APPLICATION = 'skalla.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
 
-    #Instalar pacote psycopg2-binary para funcionar
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'ENGINE': 'tenant_schemas.postgresql_backend',
-        'NAME': 'skalla',
-        'USER': 'dev',
-        'PASSWORD': 'dev',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',  # 8000 is default
+        'ENGINE': config('DATABASE_ENGINE'),
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT'),  # 8000 is default
     }
 }
 
