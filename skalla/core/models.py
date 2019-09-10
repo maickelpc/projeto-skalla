@@ -39,7 +39,7 @@ class Cidade(models.Model):
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT, related_name='estado')
 
     def __str__(self):
-        return self.nome
+        return self.nome + ' / ' +self.estado.sigla
 
     def pais(self):
         return self.estado.pais.nome
