@@ -26,13 +26,12 @@ class Empresa(models.Model):
 class Area(models.Model):
     id = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=50, verbose_name="Área")
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="empresa_area", verbose_name="Empresa")
     responsavel = models.ForeignKey(User, on_delete=models.PROTECT,related_name="user_area", verbose_name="Usuário Responsável")
 
     class Meta:
         verbose_name = "Área"
         verbose_name_plural = "Áreas"
-        ordering = ['empresa','nome']
+        ordering = ['nome']
     def __str__(self):
         return self.nome
 
@@ -52,6 +51,7 @@ class Departamento(models.Model):
         return self.area.nome + ' - ' + self.nome
 
 class Colaborador(User):
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name="empresa_area", verbose_name="Empresa")
     dataNascimento = models.DateField(verbose_name="Data de Nascimento")
     telefone = models.CharField(max_length=20, verbose_name="Telefone")
     celular = models.CharField(max_length=20, verbose_name="Celular")

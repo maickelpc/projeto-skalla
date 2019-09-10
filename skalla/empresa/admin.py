@@ -33,20 +33,20 @@ class ColaboradorInline(admin.TabularInline):
 
 class EmpresaAdmin(ReverseModelAdmin):
     list_display = ['id','nome', 'nomeFantasia','CNPJ']
-    list_display_link = ['id', 'nome', 'nomeFantasia', 'CNPJ']
+    list_display_links = ['id', 'nome', 'nomeFantasia', 'CNPJ']
     search_fields = ['id', 'nome', 'nomeFantasia', 'CNPJ']
     inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
     inline_type = 'stacked'
-    inlines = [AreaInline]
+    inlines = [ColaboradorInline]
 
 admin.site.register(Empresa, EmpresaAdmin)
 
 
 class AreaAdmin(admin.ModelAdmin):
-    list_display = ['empresa','nome','responsavel']
-    list_display_links = ['empresa', 'nome', 'responsavel']
+    list_display = ['nome','responsavel']
+    list_display_links = ['nome', 'responsavel']
     search_fields = ['nome']
-    ordering = ['empresa','nome']
+    ordering = ['nome']
     list_select_related = ['responsavel']
     inlines = [DepartamentoInline]
 
@@ -73,7 +73,7 @@ class ColaboradorAdmin(admin.ModelAdmin):
     list_display = ['id','first_name','last_name','departamento','email']
     list_display_links = ['id','first_name','last_name','departamento','email']
     search_fields = ['id','first_name','last_name','departamento','email']
-    autocomplete_fields = ['departamento']
+    autocomplete_fields = ['departamento','empresa']
     form = ColaboradorForm
     inlines = [PeriodoInativoInline]
 
