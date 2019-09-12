@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import  Group
 # Create your models here.
 
 class Pais(models.Model):
@@ -68,3 +68,14 @@ class Endereco(models.Model):
     class Meta:
         verbose_name = "Endereço"
         verbose_name_plural = "Endereços"
+
+
+class Configuracao(models.Model):
+    id = models.AutoField(primary_key=True)
+    grupoColaborador = models.ForeignKey(Group, related_name='grupo_colaborador', on_delete=models.PROTECT, verbose_name="Grupo dos Colaboradores", blank=True, null=True)
+    grupoGestor = models.ForeignKey(Group, related_name='grupo_administrador', on_delete=models.PROTECT, verbose_name="Grupo dos Adminstradores", blank=True, null=True )
+    grupoUsuarios = models.ForeignKey(Group, related_name='grupo_Usuario', on_delete=models.PROTECT, verbose_name="Grupo dos Usuários", blank=True, null=True )
+
+    class Meta:
+        verbose_name = "Configurações"
+        verbose_name_plural = "Configurações"

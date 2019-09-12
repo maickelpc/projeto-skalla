@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Pais, Estado, Cidade, Endereco
+from .models import Pais, Estado, Cidade, Endereco, Configuracao
 
 # Register your models here.
 
@@ -24,7 +24,6 @@ class PaisAdmin(admin.ModelAdmin):
     list_display = ['id', 'nome']
     list_display_links = ['nome']
 
-
 admin.site.register(Pais, PaisAdmin)
 
 
@@ -48,12 +47,23 @@ class CidadeAdmin(admin.ModelAdmin):
 
 admin.site.register(Cidade, CidadeAdmin)
 
+#
+# class EnderecoAdmin(admin.ModelAdmin):
+#     search_fields = ['logradouro', 'bairro']
+#     list_display = ['id', 'logradouro', 'bairro', 'cidade']
+#     list_display_links = ['logradouro', 'bairro']
+#     autocomplete_fields = ['cidade']
+#
+#
+# admin.site.register(Endereco, EnderecoAdmin)
 
-class EnderecoAdmin(admin.ModelAdmin):
-    search_fields = ['logradouro', 'bairro']
-    list_display = ['id', 'logradouro', 'bairro', 'cidade']
-    list_display_links = ['logradouro', 'bairro']
-    autocomplete_fields = ['cidade']
+
+class ConfiguracaoAdmin(admin.ModelAdmin):
+    search_fields = ['id']
+    list_display = ['id', 'grupoColaborador', 'grupoUsuarios','grupoGestor']
+    list_display_links = ['id', 'grupoColaborador', 'grupoUsuarios','grupoGestor']
+    autocomplete_fields = [ 'grupoColaborador', 'grupoUsuarios', 'grupoGestor']
+    # list_editable = [ 'grupoColaborador', 'grupoUsuarios', 'grupoGestor']
 
 
-admin.site.register(Endereco, EnderecoAdmin)
+admin.site.register(Configuracao, ConfiguracaoAdmin)

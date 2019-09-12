@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from core.models import Endereco
-from django.contrib.auth.models import User
+from core.models import Configuracao
+from django.contrib.auth.models import User, Group
 
 # Create your models here.
 class Empresa(models.Model):
@@ -75,6 +76,14 @@ class Colaborador(User):
     def email(self):
         return self.email
 
+    def save(self, *args, **kwargs):
+        if self.id == None:
+            self.is_staff = True;
+            self.set_password('123456')
+
+        super().save(*args, **kwargs)
+        config = Configuracao.objects.first()
+        config.grupoColaborador.user_set.add(self)
 
     class Meta:
         verbose_name = "Colaborador"
@@ -98,3 +107,5 @@ class PeriodoInativo(models.Model):
         verbose_name = "Período de Inatividade"
         verbose_name_plural = "Períodos de Inatividade"
         ordering = ['dataRegistro']
+
+

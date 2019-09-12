@@ -41,16 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
-    'empresa'
+    'empresa',
+    'cliente'
     # 'teste'
 ]
 
 
 TENANT_APPS = ['teste']
 
-TENANT_MODEL = 'core.model.ClienteSistema'
+# TENANT_MODEL = 'core.model.ClienteSistema'
 
-DEFAULT_FILE_STORAGE = 'core.model.ClienteSistema'
+# DEFAULT_FILE_STORAGE = 'core.model.ClienteSistema'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
