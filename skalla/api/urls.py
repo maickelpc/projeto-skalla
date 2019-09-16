@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-class rotasApi():
+class RotasApi():
     rotasApi = routers.DefaultRouter()
 
     def __init__(self):
@@ -10,4 +10,4 @@ class rotasApi():
         # self.router.register('fdd/arquivo',ArquivoFddViewSet,'ArquivoFdd')
 
     def rotas(self):
-        return self.router
+        return self.router.urls
