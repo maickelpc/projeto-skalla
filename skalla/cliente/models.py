@@ -36,7 +36,7 @@ class Cliente(models.Model):
 
 class PontoAlocacao(models.Model):
     id = models.AutoField(primary_key=True)
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, verbose_name="Cliente")
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, verbose_name="Cliente", related_name='cliente_ponto')
     nome = models.CharField(max_length=50, verbose_name="Ponto de Alocação")
     descricao = models.TextField( verbose_name="Descrição do Local")
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, verbose_name="Endereço")

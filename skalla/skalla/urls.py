@@ -10,6 +10,7 @@ from core import views
 
 urlpatterns = [
     path('', views.hello),
-    path('api/', include(RotasApi.rotasApi.urls )),
+    # path('api/', include(RotasApi.rotasApi.urls)),
+    url(r'^api/', include(RotasApi.rotasApi.urls)),
     path('admin/', admin.site.urls),
 ]

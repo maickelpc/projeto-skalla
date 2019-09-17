@@ -82,8 +82,9 @@ class Colaborador(User):
             self.set_password('123456')
 
         super().save(*args, **kwargs)
-        config = Configuracao.objects.first()
-        config.grupoColaborador.user_set.add(self)
+        if self.id == None:
+            config = Configuracao.objects.first()
+            config.grupoColaborador.user_set.add(self)
 
     class Meta:
         verbose_name = "Colaborador"
