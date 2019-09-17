@@ -13,9 +13,9 @@ from django.core.mail import send_mail
 
 # Create your views here.
 
+
 def hello(request):
     return render(request, 'index.html', {'usuario': 'FULANO'})
-
 
 
 class PacoteView(DetailView, FormMixin):

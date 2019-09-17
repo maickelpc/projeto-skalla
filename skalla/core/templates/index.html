@@ -12,15 +12,51 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}
+
+    <!-- Load required Bootstrap and BootstrapVue CSS -->
+<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+<!-- Load polyfills to support older browsers -->
+<script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+<!-- Load Vue followed by BootstrapVue -->
+<script src="https://vuejs.org/js/vue.js"></script>
+<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+
   <div id="content-main">
 
 
+    <b-container class="bv-example-row" id="calendar">
+        <b-row>
+            <b-col v-for="dia in dias">
+                [[ dia.nome ]]
+            </b-col>
+        </b-row>
+    </b-container>
 
-    CONTEUDO
+<script type="application/javascript">
 
+        var app = new Vue({
+            el : '#calendar',
+            data: {
+                dias : [{
+                    nome: "Seg"
+                }, {
+                    nome: "Ter"
+                },{
+                    nome: "Qua"
+                },{
+                    nome: "Qui"
+                },{
+                    nome: "Sex"
+                }]
+            },
+            delimiters: ["[[", "]]"]
+        })
 
+    </script>
 
   </div>
+
 {% endblock %}
 
 
