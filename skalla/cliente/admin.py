@@ -4,6 +4,20 @@ from .models import Escala, Turno, Turno_PontoAlocacao, PontoAlocacao, Cliente, 
 from core.models import Endereco
 # Register your models here.
 
+from django import forms
+from .models import Colaborador
+
+
+class FormTurno(forms.ModelForm):
+    periodo = forms.CharField(max_length=100)
+
+    class Meta:
+        model = Turno_PontoAlocacao
+        fields = ['qtdeColaboradores','pontoAlocacao','turno','periodo']
+
+
+
+
 class TurnoAdmin(admin.ModelAdmin):
     list_display = ['id','descricao','descricao','horasTrabalhadas','horasDescanso','ativo']
     list_display_links = ['id','descricao','descricao','horasTrabalhadas','horasDescanso','ativo']
@@ -24,11 +38,14 @@ class PontoAlocacaoInline(admin.TabularInline):
     fields = ['id', 'nome', 'descricao']
     can_delete = False
 
-class Turno_PontoAlocacaoInline(admin.TabularInline):
+
+
+
+class Turno_PontoAlocacaoInline(admin.StackedInline):
     model = Turno_PontoAlocacao
     extra = 0
     autocomplete_fields = ['turno']
-    # search_fields = ['id']
+    form = FormTurno
 
 class ClienteAdmin(ReverseModelAdmin):
     list_display = ['id','nomeFantasia','nome','CNPJ','contatoEscala','telefone']

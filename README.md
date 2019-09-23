@@ -2,6 +2,8 @@
 Sistema de gestão de escala de trabalho
 
 pip install django
+pip install django-reverse-admin
+pip install Pillow
 pip install django-suit
 pip install python-decouple
 pip install psycopg2-binary

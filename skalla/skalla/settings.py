@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'web',
     'api',
     'core',
     'empresa',
@@ -161,7 +162,7 @@ REST_FRAMEWORK = {
     ),
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 50
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

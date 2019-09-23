@@ -64,6 +64,8 @@ class Colaborador(User):
     limiteHorasMes = models.SmallIntegerField( validators=[MinValueValidator(1)], verbose_name="Máximo de horas de trabalho mensal")
     limiteHorasSemana = models.SmallIntegerField(validators=[MinValueValidator(1)], verbose_name="Máximo de horas de trabalho semanal")
 
+    # periodosInativos = OneToMany(to=PeriodoInativo)
+
     def __str__(self):
         return self.first_name
 
