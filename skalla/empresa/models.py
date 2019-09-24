@@ -4,6 +4,7 @@ from core.models import Endereco
 from core.models import Configuracao
 from django.contrib.auth.models import User, Group
 
+
 # Create your models here.
 class Empresa(models.Model):
     id = models.AutoField(primary_key=True)
