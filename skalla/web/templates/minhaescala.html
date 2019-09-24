@@ -16,14 +16,23 @@
 
 
   <div id="content-main">
-    <div id="app">
+    <div id="minhaescala">
   MENSAGEM DO VUE [[ message ]]
+
+
+
+    <button v-on:click="buscar()">Buscar</button>
+
+     dados: [[ escalas ]]<br>
+     total: [[total]]
+
     </div>
+
 
   </div>
 
 
-<script type="application/javascript" src="{% static 'web/app.js' %}"></script>
+<script type="application/javascript" src="{% static 'web/minhaEscala.js' %}"></script>
 
 {% endblock %}
 

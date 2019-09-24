@@ -7,6 +7,10 @@
   <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% endblock %}"/>
   <link rel="stylesheet" type="text/css" href="{% static 'suit/bootstrap/css/bootstrap.min.css' %}" media="all"/>
   <link rel="stylesheet" type="text/css" href="{% static 'suit/css/suit.css' %}" media="all">
+
+  <script src="{% static 'web/componentes/vue.min.js' %}"></script>
+  <script src="{% static 'web/componentes/vue-resources.js' %}"></script>
+
   {% block extrastyle %}{% endblock %}
   {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}"/>{% endif %}
   <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
@@ -206,7 +210,11 @@
 {% endblock %}
 
   <script src="{% static 'suit/js/suit.js' %}"></script>
-  {% block extrajs %}{% endblock %}
+  {% block extrajs %}
+
+
+
+{% endblock %}
 
 </body>
 </html>

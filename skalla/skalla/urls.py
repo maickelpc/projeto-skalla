@@ -12,6 +12,7 @@ from web import views
 urlpatterns = [
     # path('', views.hello),
     path('', views.index),
+    path('minhaescala/', views.minhaEscala),
     path('api/', include(RotasApi.rotasApi.urls)),
     path('admin/', admin.site.urls),
 ]

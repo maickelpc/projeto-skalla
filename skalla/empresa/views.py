@@ -19,7 +19,7 @@ class ColaboradorViewSet(viewsets.ModelViewSet):
     # queryset = Colaborador.objects.filter(dataAdmissao__gte=datetime.datetime.now().today()) #GT > que
     queryset = Colaborador.objects.exclude(colaborador_periodo__dataInicio__lte=datetime.datetime.now().today(),colaborador_periodo__dataFim__gte=datetime.datetime.now().today())
     serializer_class = ColaboradorSerializer
-    filter_backends = (SearchFilter)
+    filter_backends = (SearchFilter,)
 
     search_fields = ('id','email','username','first_name','last_name')
 
