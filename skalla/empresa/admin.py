@@ -37,7 +37,7 @@ class EmpresaAdmin(ReverseModelAdmin):
     search_fields = ['id', 'nome', 'nomeFantasia', 'CNPJ']
     inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
     inline_type = 'stacked'
-    inlines = [ColaboradorInline]
+    # inlines = [ColaboradorInline]
 
 admin.site.register(Empresa, EmpresaAdmin)
 

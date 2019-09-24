@@ -21,14 +21,16 @@
 <!-- Load Vue followed by BootstrapVue -->
 <script src="https://vuejs.org/js/vue.js"></script>
 <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+
 
   <div id="content-main">
 
 
     <b-container class="bv-example-row" id="calendar">
         <b-row>
-            <b-col v-for="dia in dias">
-                [[ dia.nome ]]
+            <b-col v-for="c in colaboradores">
+                [[ c.first_name ]],
             </b-col>
         </b-row>
     </b-container>
@@ -38,19 +40,29 @@
         var app = new Vue({
             el : '#calendar',
             data: {
-                dias : [{
-                    nome: "Seg"
-                }, {
-                    nome: "Ter"
-                },{
-                    nome: "Qua"
-                },{
-                    nome: "Qui"
-                },{
-                    nome: "Sex"
-                }]
+                colaboradores: [],
+                loading: false,
+                colaborador: {},
+                message: null
             },
-            delimiters: ["[[", "]]"]
+            delimiters: ["[[", "]]"],
+            mounted: function () {
+                this.getColaboradores();
+            },
+            methods: {
+                getColaboradores: function() {
+                  this.loading = true;
+                  this.$http.get('/api/colaborador/')
+                      .then((response) => {
+                        this.colaboradores = response.data.results;
+                        this.loading = false;
+                      })
+                      .catch((err) => {
+                       this.loading = false;
+                       console.log(err);
+                      })
+                 },
+            }
         })
 
     </script>
