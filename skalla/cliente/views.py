@@ -12,8 +12,14 @@ from django.core.files import temp as tempfile
 from django.core.files.uploadedfile import UploadedFile
 
 
-from .serializers import ClienteCompletoSerializer, ClienteSimpleSerializer, PontoAlocacaoSerializer, PerfilJornadaSerializer, Turno_PontoAlocacaoSerializer
-from .models import Cliente, PontoAlocacao, PerfilJornada, Turno_PontoAlocacao
+from .serializers import ClienteCompletoSerializer, \
+    ClienteSimpleSerializer, \
+    PontoAlocacaoSerializer, \
+    PerfilJornadaSerializer, \
+    Turno_PontoAlocacaoSerializer, \
+    EscalaSimplificadoSerializer, EscalaSerializer, \
+    EscalaColaboradorSerializer, EscalaColaboradorSimplificadoSerializer
+from .models import Cliente, PontoAlocacao, PerfilJornada, Turno_PontoAlocacao, EscalaColaborador, Escala
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
@@ -40,14 +46,26 @@ class TurnoPontoAlocacaoViewSet(viewsets.ModelViewSet):
 
 
 
-
-
-
-
-
-
 class PerfilJornadaViewSet(viewsets.ModelViewSet):
     queryset = PerfilJornada.objects.all()
     serializer_class = PerfilJornadaSerializer
     filter_backends = (SearchFilter,)
     search_fields = ('tipo','descricao')
+
+
+class EscalaViewSet(viewsets.ModelViewSet):
+    queryset = Escala.objects.all()
+    serializer_class = EscalaSimplificadoSerializer
+    filter_backends = (SearchFilter,DjangoFilterBackend)
+    search_fields = ()
+    filter_fields = ['turnoPonto','perfil','status']
+    ordering_fields = '__all__'
+
+
+class EscalaColaboradorViewSet(viewsets.ModelViewSet):
+    queryset = EscalaColaborador.objects.all()
+    serializer_class = EscalaColaboradorSimplificadoSerializer
+    filter_backends = (SearchFilter,DjangoFilterBackend)
+    search_fields = ()
+    filter_fields = ['escala','colaborador']
+    ordering_fields = '__all__'

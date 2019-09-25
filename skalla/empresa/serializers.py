@@ -15,12 +15,10 @@ class DepartamentoSerializer(serializers.ModelSerializer):
 
 class ColaboradorSerializer(serializers.ModelSerializer):
     departamento = DepartamentoSerializer()
-
     class Meta:
         model = Colaborador
         fields = [
             "id",
-            # 'dataAdmissao',
             "username",
             "first_name",
             "last_name",

@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from .models import Cliente, PontoAlocacao, Turno, PerfilJornada, Turno_PontoAlocacao
+from .models import Cliente, PontoAlocacao, Turno, PerfilJornada, Turno_PontoAlocacao, Escala, EscalaColaborador
 from empresa.models import Colaborador
+from empresa.serializers import ColaboradorSerializer
 
 from core.serializers import EnderecoSimpleSerializer
 from rest_framework import serializers
@@ -37,4 +38,32 @@ class ClienteCompletoSerializer(serializers.ModelSerializer):
 class PerfilJornadaSerializer(serializers.ModelSerializer):
     class Meta:
         model = PerfilJornada
+        fields = ('__all__')
+
+
+class EscalaSimplificadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Escala
+        fields = ('__all__')
+
+class EscalaSerializer(serializers.ModelSerializer):
+    turnoPonto = Turno_PontoAlocacaoSerializer
+    perfil = PerfilJornadaSerializer
+    class Meta:
+        model = Escala
+        fields = ('__all__')
+
+
+
+class EscalaColaboradorSimplificadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EscalaColaborador
+        fields = ('__all__')
+
+
+class EscalaColaboradorSerializer(serializers.ModelSerializer):
+    escala = EscalaSerializer
+    colaborador = ColaboradorSerializer
+    class Meta:
+        model = EscalaColaborador
         fields = ('__all__')
