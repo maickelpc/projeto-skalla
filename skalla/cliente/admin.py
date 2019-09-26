@@ -47,13 +47,15 @@ class Turno_PontoAlocacaoInline(admin.StackedInline):
     autocomplete_fields = ['turno']
     form = FormTurno
 
+
+
 class ClienteAdmin(ReverseModelAdmin):
     list_display = ['id','nomeFantasia','nome','CNPJ','contatoEscala','telefone']
     list_display_links = ['id','nomeFantasia','CNPJ','nome','contatoEscala','telefone']
     search_fields = ['id','nomeFantasia','nome','CNPJ','contatoEscala','telefone']
     inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
     inline_type = 'stacked'
-    inlines = [PontoAlocacaoInline]
+    # inlines = [PontoAlocacaoInline]
 
 
 admin.site.register(Cliente, ClienteAdmin)

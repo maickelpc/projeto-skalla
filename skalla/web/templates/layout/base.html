@@ -10,6 +10,8 @@
 
   <script src="{% static 'web/componentes/vue.min.js' %}"></script>
   <script src="{% static 'web/componentes/vue-resources.js' %}"></script>
+<!--  <script src="{% static 'web/componentes/moment.min.js' %}"></script>-->
+  <script src="{% static 'web/componentes/moment-with-locales.min.js' %}"></script>
 
   {% block extrastyle %}{% endblock %}
   {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}"/>{% endif %}

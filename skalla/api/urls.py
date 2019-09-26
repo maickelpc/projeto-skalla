@@ -1,11 +1,12 @@
 from rest_framework import routers
-from cliente.views import ClienteViewSet, PerfilJornadaViewSet, PontoAlocacaoViewSet, TurnoPontoAlocacaoViewSet, EscalaViewSet
+from cliente.views import ClienteViewSet, PerfilJornadaViewSet, PontoAlocacaoViewSet, TurnoPontoAlocacaoViewSet, EscalaViewSet, EscalaColaboradorViewSet
 from empresa.views import ColaboradorViewSet
 
 class RotasApi():
     rotasApi = routers.DefaultRouter()
     rotasApi.register('colaborador', ColaboradorViewSet, 'Colaborador')
     rotasApi.register('escala', EscalaViewSet, 'Escala')
+    rotasApi.register('escala-colaborador', EscalaColaboradorViewSet, 'EscalaColaborador')
 
 
     rotasApi.register('cliente', ClienteViewSet, 'Cliente')

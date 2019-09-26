@@ -11,21 +11,29 @@ class TurnoSerializer(serializers.ModelSerializer):
         model = Turno
         fields = ('__all__')
 
-class PontoAlocacaoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PontoAlocacao
-        fields = ('__all__')
-
-class Turno_PontoAlocacaoSerializer(serializers.ModelSerializer):
-    turno = TurnoSerializer()
-    class Meta:
-        model = Turno_PontoAlocacao
-        fields = ('__all__')
-
 class ClienteSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
         fields = ('id','nomeFantasia')
+
+
+
+class PontoAlocacaoSerializer(serializers.ModelSerializer):
+    cliente = ClienteSimpleSerializer()
+    class Meta:
+        model = PontoAlocacao
+        fields = ('__all__')
+
+
+
+class Turno_PontoAlocacaoSerializer(serializers.ModelSerializer):
+    turno = TurnoSerializer()
+    pontoAlocacao = PontoAlocacaoSerializer()
+    class Meta:
+        model = Turno_PontoAlocacao
+        fields = ('__all__')
+
+
 
 class ClienteCompletoSerializer(serializers.ModelSerializer):
     pontosAlocacao = PontoAlocacaoSerializer( many=True, read_only=True, source='cliente_ponto')
@@ -47,7 +55,7 @@ class EscalaSimplificadoSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class EscalaSerializer(serializers.ModelSerializer):
-    turnoPonto = Turno_PontoAlocacaoSerializer
+    turnoPonto = Turno_PontoAlocacaoSerializer()
     perfil = PerfilJornadaSerializer
     class Meta:
         model = Escala
@@ -62,7 +70,7 @@ class EscalaColaboradorSimplificadoSerializer(serializers.ModelSerializer):
 
 
 class EscalaColaboradorSerializer(serializers.ModelSerializer):
-    escala = EscalaSerializer
+    escala = EscalaSerializer()
     colaborador = ColaboradorSerializer
     class Meta:
         model = EscalaColaborador

@@ -2,7 +2,10 @@
 {% load i18n admin_static %}
 
 {% block extrastyle %}
+
+
   {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'web/styles/loader.css' %}" media="all">
 {% endblock %}
 
 
@@ -15,23 +18,68 @@
 
 
 
-  <div id="content-main">
     <div id="minhaescala">
-  MENSAGEM DO VUE [[ message ]]
+
+        <div class="tela-inteira" v-if="carregando">
+             <div class="lds-hourglass"> </div>
+        </div>
+
+
+        <div class="alert alert-success" v-if="mensagemSucesso.length > 1">
+            <button class="close" data-dismiss="alert">x</button>
+            [[mensagemSucesso]]
+        </div>
+        <div class="alert alert-danger" v-if="mensagemErro.length > 1">
+            <button class="close" data-dismiss="alert">x</button>
+            [[mensagemErro]]
+        </div>
+
+
+        <div id="content" class="flex row-fluid">
+            <div id="content-main">
+                <div class="inner-center-column">
+
+                    <h1>Minhas escalas</h1>
+                    <div class="row">
+                        <div class="col col-md-6" v-for="escala in escalas">
+                            <div style="border: 1px solid; padding:15px" class="card" >
+
+                              <div class="card-body" >
+                                <h4  class="card-title">
+                                    <span v-if="escala.status === 0" class="badge badge-success">Programada</span>
+                                    <span v-if="escala.status === 2"  class="badge badge-danger">Cancelado</span>
+                                    <span v-if="escala.status === 1" class="badge badge-info">Confirmada</span>
+                                    - [[escala.escala.dataInicio | datahora]] - [[escala.escala.dataFim | datahora]] - [[escala.escala.turnoPonto.pontoAlocacao.nome]] / [[escala.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]]</h4>
+
+                                  <p class="card-text"> Jornada: [[escala.escala.turnoPonto.turno.descricao]] - [[escala.escala.turnoPonto.turno.periodo]] </p>
+                                  <p class="card-text">
+
+                                </p>
+                                  <div style="text-align: right">
+                                    <a v-if="escala.status === 0 " v-on:click="abreModalRequisicao(escala)" href="javascript:void(0)" class="btn btn-primary">Confirmar</a>
+                                  <a v-if="escala.status === 0 " v-on:click="abreModalRequisicao(escala)" href="javascript:void(0)" class="btn btn-danger">Recusar</a>
+                                  <a v-if="escala.status === 1 " v-on:click="abreModalRequisicao(escala)" href="javascript:void(0)" class="btn btn-warning">Solicitar Alteração</a>
+                                  </div>
+
+                              </div>
+                            </div>
+                        </div>
+                    </div>
 
 
 
-    <button v-on:click="buscar()">Buscar</button>
+                </div>
+            </div>
+        </div>
 
-     dados: [[ escalas ]]<br>
      total: [[total]]
-
     </div>
 
 
-  </div>
 
-
+<script type="application/javascript">
+    var userId = "{{request.user.id}}"
+</script>
 <script type="application/javascript" src="{% static 'web/minhaEscala.js' %}"></script>
 
 {% endblock %}

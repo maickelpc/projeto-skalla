@@ -64,7 +64,7 @@ class EscalaViewSet(viewsets.ModelViewSet):
 
 class EscalaColaboradorViewSet(viewsets.ModelViewSet):
     queryset = EscalaColaborador.objects.all()
-    serializer_class = EscalaColaboradorSimplificadoSerializer
+    serializer_class = EscalaColaboradorSerializer
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ()
     filter_fields = ['escala','colaborador']
