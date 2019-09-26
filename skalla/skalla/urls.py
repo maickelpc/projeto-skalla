@@ -6,13 +6,13 @@ from django.urls import path, include
 from rest_framework import routers
 from api.urls import RotasApi
 
-# from core import views
-from web import views
+from core import views
+from web import views as webview
 
 urlpatterns = [
     # path('', views.hello),
     path('', views.index),
-    path('minhaescala/', views.minhaEscala),
+    path('minhaescala/', webview.minhaEscala),
     path('api/', include(RotasApi.rotasApi.urls)),
     path('admin/', admin.site.urls),
 ]

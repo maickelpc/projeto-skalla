@@ -10,10 +10,16 @@ from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, TemplateView
 from django.core.mail import send_mail
+from django import forms
+from cliente.models import Cliente
+from .forms import FormInicialEscala
 
 # Create your views here.
 
 
-def hello(request):
-    return render(request, 'index.html', {'usuario': 'FULANO'})
+def index(request):
+    contexto = {
+        'meuform': FormInicialEscala()
+    }
+    return render(request, 'index.html', contexto)
 

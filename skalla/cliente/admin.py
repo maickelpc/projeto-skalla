@@ -53,7 +53,7 @@ class ClienteAdmin(ReverseModelAdmin):
     search_fields = ['id','nomeFantasia','nome','CNPJ','contatoEscala','telefone']
     inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
     inline_type = 'stacked'
-    inlines = [PontoAlocacaoInline]
+    # inlines = [PontoAlocacaoInline]
 
 
 admin.site.register(Cliente, ClienteAdmin)

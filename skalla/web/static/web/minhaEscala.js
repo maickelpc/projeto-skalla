@@ -20,7 +20,7 @@ var app = new Vue({
 
     this.loading = true;
 
-    this.$http.get("/api/colaborador/")
+    this.$http.get("/api/escalas/")
         .then( response =>  {
           this.total = response.body.count;
           this.escalas = response.body.results;
