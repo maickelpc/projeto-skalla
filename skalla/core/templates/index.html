@@ -26,6 +26,11 @@
 
   <div id="content-main">
 
+    <form action="/escala/" method="post">
+        {% csrf_token %}
+        {{ meuform }}
+        <input type="submit" value="Submit" />
+    </form>
 
     <b-container class="bv-example-row" id="calendar">
         <b-row>
@@ -36,6 +41,8 @@
     </b-container>
 
 <script type="application/javascript">
+
+        let cliente, turno, ponto;
 
         var app = new Vue({
             el : '#calendar',

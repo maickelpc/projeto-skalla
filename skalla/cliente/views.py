@@ -40,7 +40,7 @@ class PontoAlocacaoViewSet(viewsets.ModelViewSet):
 class TurnoPontoAlocacaoViewSet(viewsets.ModelViewSet):
     queryset = Turno_PontoAlocacao.objects.all()
     serializer_class = Turno_PontoAlocacaoSerializer
-    filter_backends = (SearchFilter,DjangoFilterBackend)
+    filter_backends = (SearchFilter,DjangoFilterBackend,)
     search_fields = ('id')
     filter_fields = ['id','pontoAlocacao','turno']
 
