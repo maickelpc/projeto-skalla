@@ -121,6 +121,8 @@ class EscalaColaborador(models.Model):
     id = models.AutoField(primary_key=True)
     escala = models.ForeignKey(Escala, on_delete=models.PROTECT, related_name="escala_colaborador", verbose_name="Escala")
     colaborador = models.ForeignKey(Colaborador, on_delete=models.PROTECT, related_name="colaborador_escala", verbose_name="Colaborador")
+    dataInicio = models.DateTimeField()
+    dataFim = models.DateTimeField()
     dataRegistro = models.DateTimeField(auto_now_add=True)
     dataConfirmacao = models.DateTimeField(null=True, blank=True)
     dataCancelamento = models.DateTimeField(null=True, blank=True)

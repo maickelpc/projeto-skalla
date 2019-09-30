@@ -31,7 +31,10 @@ var app = new Vue({
         this.$http.get(`/api/escala-colaborador/?colaborador=${userId}`)
         .then( response =>  {
           this.total = response.body.count;
-          this.escalas = response.body.results;
+          this.escalas = response.body.results.map(x => {
+            return x;
+          });
+          console.log(escalas);
 
         }).catch( erro => {
             console.log(erro);

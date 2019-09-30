@@ -40,12 +40,13 @@
                 <div class="inner-center-column">
 
                     <h1>Minhas escalas</h1>
-                    <div class="row">
-                        <div class="col col-md-6" v-for="escala in escalas">
+                    <div class="">
+                        <div style="margin-top: 10px" class="" v-for="escala in escalas">
                             <div style="border: 1px solid; padding:15px" class="card" >
 
                               <div class="card-body" >
                                 <h4  class="card-title">
+                                    <span v-if="escala.status === 0" class="badge badge-success">Executada</span>
                                     <span v-if="escala.status === 0" class="badge badge-success">Programada</span>
                                     <span v-if="escala.status === 2"  class="badge badge-danger">Cancelado</span>
                                     <span v-if="escala.status === 1" class="badge badge-info">Confirmada</span>
