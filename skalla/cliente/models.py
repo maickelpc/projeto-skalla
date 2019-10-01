@@ -89,6 +89,7 @@ class PerfilJornada(models.Model):
     id = models.AutoField(primary_key=True)
     descricao = models.CharField(max_length=50, verbose_name="Descrição")
     tipo = models.CharField(max_length=50, verbose_name="Tipo")
+    dias = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)],default=1)
     duplicar = models.BooleanField(default=False)
     horasAntecedenciaDuplicacao = models.PositiveSmallIntegerField(validators=[MinValueValidator(0)], verbose_name="Horas de antecedencia para duplicar")
 

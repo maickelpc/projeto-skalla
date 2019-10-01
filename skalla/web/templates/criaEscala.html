@@ -1,0 +1,194 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+
+    <!-- Load required Bootstrap and BootstrapVue CSS -->
+<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+<!-- Load polyfills to support older browsers -->
+<script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+<!-- Load Vue followed by BootstrapVue -->
+<script src="https://vuejs.org/js/vue.js"></script>
+<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+
+
+  <div id="content-main" class="container">
+    <div class="row">
+        <form action="/escala/" method="post">
+            {% csrf_token %}
+
+            <label for="cliente">Cliente:</label><br/>
+            <select v-model="cliente" id="cliente">
+                <optgroup label="Selecione um Cliente"></optgroup>
+                <option v-for="c in clientes" v-bind:value="c">[[c.nomeFantasia]]</option>
+            </select>
+            <br/>
+            <label for="ponto" v-if="cliente.id">Ponto de Alocação:</label><br/>
+            <select v-model="ponto" v-if="cliente.id" id="ponto">
+                <optgroup label="Selecione um Ponto de Alocação"></optgroup>
+                <option v-for="p in pontos" v-bind:value="p">[[p.nome]] - [[p.descricao]]</option>
+            </select>
+            <br/>
+            <label for="turno" v-if="ponto.id">Turnos do Ponto:</label><br/>
+            <select v-model="turno" v-if="ponto.id" id="ponto">
+                <optgroup label="Selecione um Turno"></optgroup>
+                <option v-for="t in turnos" v-bind:value="t">[[t.turno.descricao]]</option>
+            </select>
+            <br/>
+            <label for="perfil">Perfil:</label><br/>
+            <select v-model="perfil" id="perfil">
+                <optgroup label="Selecione um Perfil"></optgroup>
+                <option v-for="p in perfis" v-bind:value="p">[[p.descricao]]</option>
+            </select>
+
+        </form><br/>
+    </div>
+
+    <div id="calendario" class="row">
+      <div class="row">
+          <div class="col-md-3" v-if="perfil.id && cliente.id" v-for="p in perfil.dias">
+              <div class="row">Nome do Dia</div>
+              <div class="row">
+                  <div class="col">teste</div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+{#    <b-container class="bv-example-row" id="calendar">#}
+{#        <b-row>#}
+{#            <b-col v-for="c in colaboradores">#}
+{#                [[ c.first_name ]],#}
+{#            </b-col>#}
+{#        </b-row>#}
+{#    </b-container>#}
+
+<script type="application/javascript">
+
+        var app = new Vue({
+            el : '#content-main',
+            data: {
+                colaboradores: [],
+                loading: false,
+                colaborador: {},
+                message: null,
+                perfis: [],
+                perfil: {},
+                pontos: [],
+                ponto: {},
+                clientes: [],
+                cliente: {},
+                turnos: [],
+                turno: {}
+            },
+            delimiters: ["[[", "]]"],
+            mounted: function () {
+                this.getColaboradores();
+                this.getPerfisJornada();
+                this.getClientes();
+            },
+            watch: {
+                cliente: function(val) {
+                    this.getPontosAlocacao(val.id);
+                },
+                ponto: function(val) {
+                    this.getTurnosPonto(val.id);
+                }
+            },
+            methods: {
+                getColaboradores: function() {
+                  this.loading = true;
+                  this.$http.get('/api/colaborador/')
+                      .then((response) => {
+                        this.colaboradores = response.data.results;
+                        this.loading = false;
+                      })
+                      .catch((err) => {
+                       this.loading = false;
+                       console.log(err);
+                      })
+                 },
+                getPerfisJornada: function() {
+                  this.loading = true;
+                  this.$http.get('/api/perfil-jornada/')
+                      .then((response) => {
+                        this.perfis = response.data.results;
+                        this.loading = false;
+                      })
+                      .catch((err) => {
+                       this.loading = false;
+                       console.log(err);
+                      })
+                 },
+                getPerfilJornada: function(id) {
+                  this.loading = true;
+                  this.$http.get('/api/perfil-jornada/'+id+'/')
+                      .then((response) => {
+                        this.perfil = response.data;
+                        this.loading = false;
+                      })
+                      .catch((err) => {
+                       this.loading = false;
+                       console.log(err);
+                      })
+                 },
+                 getPontosAlocacao: function(cliente) {
+                  this.loading = true;
+                  this.$http.get('/api/ponto-alocacao?cliente='+cliente)
+                      .then((response) => {
+                        this.pontos = response.data.results;
+                        this.loading = false;
+                      })
+                      .catch((err) => {
+                       this.loading = false;
+                       console.log(err);
+                      })
+                 },
+                getTurnosPonto: function(val) {
+                  this.loading = true;
+                  this.$http.get('/api/turno-ponto?pontoAlocacao='+val)
+                      .then((response) => {
+                        this.turnos = response.data.results;
+                        this.loading = false;
+                      })
+                      .catch((err) => {
+                       this.loading = false;
+                       console.log(err);
+                      })
+                 },
+                getClientes: function() {
+                  this.loading = true;
+                  this.$http.get('/api/cliente/')
+                      .then((response) => {
+                        this.clientes = response.data.results;
+                        this.loading = false;
+                      })
+                      .catch((err) => {
+                       this.loading = false;
+                       console.log(err);
+                      })
+                 },
+            }
+        })
+
+    </script>
+
+  </div>
+
+{% endblock %}
+
+
+
