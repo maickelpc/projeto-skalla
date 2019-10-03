@@ -11,7 +11,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import ListView, TemplateView
 from django.core.mail import send_mail
 from django import forms
-from cliente.models import Cliente
+from cliente.models import Cliente, Escala
 from .forms import FormInicialEscala
 
 # Create your views here.
@@ -19,7 +19,8 @@ from .forms import FormInicialEscala
 
 def index(request):
     contexto = {
-        'meuform': FormInicialEscala()
+        'meuform': FormInicialEscala(),
+        'escala' : Escala()
     }
-    return render(request, 'index.html', contexto)
+    return render(request, 'criaEscala.html', contexto)
 
