@@ -1,12 +1,12 @@
 Vue.filter('datahora', function(value) {
   if (value) {
-    return moment(String(value)).format('DD/MM/YYYY hh:mm')
+    return moment(String(value)).format('DD/MM/YYYY HH:mm')
   }
 });
 
 Vue.filter('data', function(value) {
   if (value) {
-    return moment(String(value)).format('DD/MM/YYYY hh:mm')
+    return moment(String(value)).format('DD/MM/YYYY HH:mm')
   }
 });
 
@@ -18,23 +18,29 @@ var app = new Vue({
       escalas: [],
       total: 0,
       carregando: false,
+
+      escalaConfirma: {}
   },
    created: function() {
     this.minhasEscalas();
     console.log("Criado");
   },
   methods: {
+
     minhasEscalas: function() {
-
         this.carregando = true;
-
+        let agora = moment();
         this.$http.get(`/api/escala-colaborador/?colaborador=${userId}`)
         .then( response =>  {
           this.total = response.body.count;
           this.escalas = response.body.results.map(x => {
+            x.dataInicio = moment(x.dataInicio);
+            x.dataFim = moment(x.dataFim);
+            x.horas = moment.duration(x.dataFim.diff(x.dataInicio)).asHours();
+            x.executada = x.dataInicio.diff(agora) < 0;
+            x.statusSolicitataoFormatado = (x.statusSolicitacao === 1) ? 'Pendente' : ((x.statusSolicitacao === 2) ? 'Aceito' : 'Recusado' )
             return x;
           });
-          console.log(escalas);
 
         }).catch( erro => {
             console.log(erro);
@@ -42,22 +48,62 @@ var app = new Vue({
         .finally(() => {
             this.carregando = false;
         });
+    },
 
+
+     confirmaEscala: function(escala) {
+
+        console.log(escala);
+        this.carregando = true;
+
+        let headers = {
+            'Content-Type': 'application/json',
+            "X-CSRFToken": token
+          };
+        this.$http.post(`/api/escala-colaborador/confirma/`, escala, {headers})
+        .then( response =>  {
+            escala.status = 1;
+            escala.dataConfirmacao = moment();
+
+
+        }).catch( erro => {
+            console.log(erro);
+        })
+        .finally(() => {
+            this.carregando = false;
+        });
+    },
+
+
+    enviaSolicitacao: function(escala){
+        this.carregando = true;
+
+        let headers = {
+            'Content-Type': 'application/json',
+            "X-CSRFToken": token
+          };
+        this.$http.post(`/api/escala-colaborador/registrasolicitacao/`, escala, {headers})
+        .then( response =>  {
+            escala.statusSolicitacao = 1;
+            escala.dataSolicitacaoAlteracao = moment();
+            escala.statusSolicitataoFormatado = 'Pendente';
+
+        }).catch( erro => {
+
+            console.log(erro);
+        })
+        .finally(() => {
+            this.carregando = false;
+        });
 
     },
 
 
-
-    abreModalRequisicao: function(escala){
+    abreModal: function(escala){
         this.mensagemSucesso = '';
         this.mensagemErro = '';
-
-        alert(escala);
-        if(Math.floor(Math.random() * 101) % 2 == 0 ){ // metodo pra gerar sucesso ou erro aleatoriamente
-            this.mensagemErro = "Deu Erro";
-        }else{
-            this.mensagemSucesso = "Deu Certo";
-        }
+//        alert("adasd");
+        this.escalaConfirma = escala;
     },
 
 

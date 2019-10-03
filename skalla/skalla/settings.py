@@ -163,10 +163,68 @@ REST_FRAMEWORK = {
     ),
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 50
+    'PAGE_SIZE': 50,
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = ('*')
 CORS_ALLOW_HEADERS = ('*')
+
+SUIT_CONFIG = {
+    # header
+    'ADMIN_NAME': 'SkAlla',
+    # 'HEADER_DATE_FORMAT': 'l, j. F Y',
+    # 'HEADER_TIME_FORMAT': 'H:i',
+
+    # forms
+    # 'SHOW_REQUIRED_ASTERISK': True,  # Default True
+    # 'CONFIRM_UNSAVED_CHANGES': True, # Default True
+
+    # menu
+    # 'SEARCH_URL': '/admin/auth/user/',
+    # 'MENU_ICONS': {
+    #    'sites': 'icon-leaf',
+    #    'auth': 'icon-lock',
+    # },
+    # 'MENU_OPEN_FIRST_CHILD': True, # Default True
+    # 'MENU_EXCLUDE': ('auth.group',),
+    'MENU': (
+        'sites',
+        {
+            'label': 'Minhas Escalas',
+            'icon':'icon-question-sign',
+            'url': '/minhaescala/'
+        },
+        {
+            'label':'Empresa' ,
+            'icon':'icon-lock',
+            'models': ('empresa.Empresa','empresa.Colaborador','empresa.Area','empresa.Departamento')
+        },
+        {
+            'label':'Clientes' ,
+            'icon':'icon-lock',
+            'models': ('cliente.Cliente','cliente.PontoAlocacao','cliente.Turno')
+        },
+        {
+            'label': 'Configurações',
+            'icon':'icon-cog',
+            'models': ('cliente.PerfilJornada','cliente.Turno','auth.user', 'auth.group', 'core.Configuracao', 'core.Cidade','core.Estado','core.Pais')
+        },
+        {
+            'label': 'DESENVOLVIMENTO',
+            'icon':'icon-cog',
+            'models': ('cliente.Escala','cliente.EscalaColaborador')
+        },
+    ),
+
+    # misc
+    # 'LIST_PER_PAGE': 15
+}
+

@@ -127,3 +127,8 @@ class EscalaColaborador(models.Model):
     dataConfirmacao = models.DateTimeField(null=True, blank=True)
     dataCancelamento = models.DateTimeField(null=True, blank=True)
     status = models.PositiveSmallIntegerField(choices=STATUS, default=0)
+    dataSolicitacaoAlteracao = models.DateTimeField(null=True, blank=True)
+    dataRetornoSolicitacaoAlteracao = models.DateTimeField(null=True, blank=True)
+    solicitacaoAlteracao = models.CharField(max_length=255, blank=True, null=True)
+    statusSolicitacao = models.SmallIntegerField(null=True, blank=True) # 1 - PENDENTE - 2 - Aceita - 3 - RECUSADA
+    retornoSolicitacao = models.CharField(max_length=255, blank=True, null=True)

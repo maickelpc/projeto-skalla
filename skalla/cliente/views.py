@@ -3,6 +3,8 @@ from django.shortcuts import render
 import datetime
 from datetime import timedelta
 from django.shortcuts import render
+import json
+from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
@@ -63,9 +65,38 @@ class EscalaViewSet(viewsets.ModelViewSet):
 
 
 class EscalaColaboradorViewSet(viewsets.ModelViewSet):
-    queryset = EscalaColaborador.objects.all()
+    queryset = EscalaColaborador.objects.order_by('dataInicio').all()
     serializer_class = EscalaColaboradorSerializer
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ()
     filter_fields = ['escala','colaborador']
     ordering_fields = '__all__'
+    parser_classes = [JSONParser]
+
+    @action(methods=['post'], detail=False)
+    def confirma(self, request):
+
+        escala = request.data
+
+        print (escala['id'])
+        escalaColaborador = EscalaColaborador.objects.filter(id=int(escala['id'])).get()
+        escalaColaborador.status = 1;
+        escalaColaborador.dataConfirmacao = datetime.datetime.now();
+        escalaColaborador.save()
+
+        return Response({'Ok:'})
+
+
+    @action(methods=['post'], detail=False)
+    def registrasolicitacao(self, request):
+        escala = request.data
+
+        print(escala['id'])
+        escalaColaborador = EscalaColaborador.objects.filter(id=int(escala['id'])).get()
+        escalaColaborador.statusSolicitacao = 1;
+        escalaColaborador.dataSolicitacaoAlteracao = datetime.datetime.now();
+        escalaColaborador.solicitacaoAlteracao = escala['solicitacaoAlteracao'];
+
+        escalaColaborador.save()
+
+        return Response({'Ok:'})
