@@ -22,49 +22,80 @@
 <script src="https://vuejs.org/js/vue.js"></script>
 <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+<script src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
 
 
-  <div id="content-main" class="container">
+  <div id="content-main" class="container-fluid">
     <div class="row">
         <form action="/escala/" method="post">
             {% csrf_token %}
-
-            <label for="cliente">Cliente:</label><br/>
-            <select v-model="cliente" id="cliente">
-                <optgroup label="Selecione um Cliente"></optgroup>
-                <option v-for="c in clientes" v-bind:value="c">[[c.nomeFantasia]]</option>
-            </select>
-            <br/>
-            <label for="ponto" v-if="cliente.id">Ponto de Alocação:</label><br/>
-            <select v-model="ponto" v-if="cliente.id" id="ponto">
-                <optgroup label="Selecione um Ponto de Alocação"></optgroup>
-                <option v-for="p in pontos" v-bind:value="p">[[p.nome]] - [[p.descricao]]</option>
-            </select>
-            <br/>
-            <label for="turno" v-if="ponto.id">Turnos do Ponto:</label><br/>
-            <select v-model="turno" v-if="ponto.id" id="ponto">
-                <optgroup label="Selecione um Turno"></optgroup>
-                <option v-for="t in turnos" v-bind:value="t">[[t.turno.descricao]]</option>
-            </select>
-            <br/>
-            <label for="perfil">Perfil:</label><br/>
-            <select v-model="perfil" id="perfil">
-                <optgroup label="Selecione um Perfil"></optgroup>
-                <option v-for="p in perfis" v-bind:value="p">[[p.descricao]]</option>
-            </select>
-
-        </form><br/>
+            <ul style="list-style: none; float: left">
+                <li style="float:left; padding: 5px">
+                    <label for="dataInicio">Data de Início da Escala</label>
+                    <input class="form-control" type="date" id="dataInicio" v-model="dataInicio" />
+                </li>
+                <li style="float:left; padding: 5px">
+                    <label for="cliente">Cliente:</label><br/>
+                    <select v-model="cliente" id="cliente"  class="form-control">
+                        <optgroup label="Selecione um Cliente"></optgroup>
+                        <option v-for="c in clientes" v-bind:value="c">[[c.nomeFantasia]]</option>
+                    </select>
+                </li>
+                <li style="float:left; padding: 5px">
+                    <label for="perfil">Perfil:</label><br/>
+                    <select v-model="perfil" id="perfil" class="form-control">
+                        <optgroup label="Selecione um Perfil"></optgroup>
+                        <option v-for="p in perfis" v-bind:value="p">[[p.descricao]]</option>
+                    </select>
+                </li>
+                <li style="float:left; padding: 5px">
+                    <label for="ponto" v-if="cliente.id">Ponto de Alocação:</label><br/>
+                    <select v-model="ponto" v-if="cliente.id" id="ponto" class="form-control">
+                        <optgroup label="Selecione um Ponto de Alocação"></optgroup>
+                        <option v-for="p in pontos" v-bind:value="p">[[p.nome]] - [[p.descricao]]</option>
+                    </select>
+                </li>
+                <li style="float:left; padding: 5px">
+                    <label for="turno" v-if="ponto.id">Turnos do Ponto:</label><br/>
+                    <select v-model="turno" v-if="ponto.id" id="ponto" class="form-control">
+                        <optgroup label="Selecione um Turno"></optgroup>
+                        <option v-for="t in turnos" v-bind:value="t">[[t.turno.descricao]]</option>
+                    </select>
+                </li>
+            </ul>
+        </form>
     </div>
 
-    <div id="calendario" class="row">
-      <div class="row">
-          <div class="col-md-3" v-if="perfil.id && cliente.id" v-for="p in perfil.dias">
-              <div class="row">Nome do Dia</div>
-              <div class="row">
-                  <div class="col">teste</div>
-              </div>
-          </div>
-      </div>
+      <table class="table table-bordered" id="calendar">
+          <thead>
+            <tr>
+              <th scope="col" v-for="d in perfil.dias">
+                  [[ dataInicio, (d - 1) | moment ]]
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="perfil.id && cliente.id && turno.id" style="font-size: 11px" >
+              <td v-for="p in perfil.dias">
+                  <table class="table table-bordered">
+                      <tr>
+                          <td>
+                              <button type="button" class="btn btn-primary btn-sm btn-outline">
+                                  [[ turno.turno.horaInicio ]] [[ turno.turno.horaFim ]]
+
+                              </button>
+                              <br/>
+                              <p v-for="c in colaboradoresDisponiveis" >
+                                      [[ c.first_name ]] [[ c.last_name ]]
+                              </p>
+                          </td>
+                      </tr>
+                  </table>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
   </div>
 
 
@@ -81,7 +112,8 @@
         var app = new Vue({
             el : '#content-main',
             data: {
-                colaboradores: [],
+                colaboradoresDisponiveis: [],
+                colaboradoresEscalados: [],
                 loading: false,
                 colaborador: {},
                 message: null,
@@ -92,7 +124,9 @@
                 clientes: [],
                 cliente: {},
                 turnos: [],
-                turno: {}
+                turno: {},
+                dataInicio: '',
+                escala : []
             },
             delimiters: ["[[", "]]"],
             mounted: function () {
@@ -108,12 +142,19 @@
                     this.getTurnosPonto(val.id);
                 }
             },
+            filters: {
+              moment: function (date, d) {
+                  moment.locale('pt-BR');
+                  console.log(date);
+                return moment(date).add(d, 'days').format('dddd, DD/MM/YYYY');
+              }
+            },
             methods: {
                 getColaboradores: function() {
                   this.loading = true;
                   this.$http.get('/api/colaborador/')
                       .then((response) => {
-                        this.colaboradores = response.data.results;
+                        this.colaboradoresDisponiveis = response.data.results;
                         this.loading = false;
                       })
                       .catch((err) => {
