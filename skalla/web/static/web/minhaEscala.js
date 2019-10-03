@@ -18,16 +18,16 @@ var app = new Vue({
       escalas: [],
       total: 0,
       carregando: false,
-
+      filtro: {},
       escalaConfirma: {}
   },
    created: function() {
-    this.minhasEscalas();
+    this.buscar();
     console.log("Criado");
   },
   methods: {
 
-    minhasEscalas: function() {
+    buscar: function() {
         this.carregando = true;
         let agora = moment();
         this.$http.get(`/api/escala-colaborador/?colaborador=${userId}`)

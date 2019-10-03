@@ -37,8 +37,24 @@
             <button class="close" data-dismiss="alert">x</button>
             [[mensagemErro]]
         </div>
+        <div class="toolbar-content clearfix">
+            <div class="clearfix">
+                <h3>Filtro</h3>
+                <form class="form-inline">
 
+                    <div class="search-container">
 
+                        <input type="text" v-model="filtro.id" placeholder="Código da escala">
+                        <input type="date" v-model="filtro.dataInicial" placeholder="Data Inicial">
+                        <input type="date" v-model="filtro.dataFinal" placeholder="Data Final">
+                        <button type="button" v-on:click="buscar()" class="btn btn-info">Filtrar</button>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    <hr>
         <div id="content" class="flex row-fluid">
             <div id="content-main">
                 <div class="inner-center-column" style="width: 125%">
