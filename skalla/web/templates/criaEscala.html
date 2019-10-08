@@ -80,14 +80,14 @@
                   <table class="table table-bordered">
                       <tr>
                           <td>
-                              <button type="button" class="btn btn-primary btn-sm btn-outline">
-                                  [[ turno.turno.horaInicio ]] [[ turno.turno.horaFim ]]
+                              <p v-for="i in getIntervaloHoras(turno.turno.horaInicio, turno.turno.horaFim)">
+                                  [[ turno.turno.horaInicio, (i - 1) | horas ]]
 
-                              </button>
-                              <br/>
-                              <p v-for="c in colaboradoresDisponiveis" >
-                                      [[ c.first_name ]] [[ c.last_name ]]
                               </p>
+                              <br/>
+{#                              <p v-for="c in colaboradoresDisponiveis" >#}
+{#                                      [[ c.first_name ]] [[ c.last_name ]]#}
+{#                              </p>#}
                           </td>
                       </tr>
                   </table>
@@ -97,15 +97,6 @@
           </tbody>
         </table>
   </div>
-
-
-{#    <b-container class="bv-example-row" id="calendar">#}
-{#        <b-row>#}
-{#            <b-col v-for="c in colaboradores">#}
-{#                [[ c.first_name ]],#}
-{#            </b-col>#}
-{#        </b-row>#}
-{#    </b-container>#}
 
 <script type="application/javascript">
 
@@ -145,11 +136,25 @@
             filters: {
               moment: function (date, d) {
                   moment.locale('pt-BR');
-                  console.log(date);
-                return moment(date).add(d, 'days').format('dddd, DD/MM/YYYY');
+                  //console.log(date);
+                  return moment(date).add(d, 'days').format('dddd, DD/MM/YYYY');
+              },
+              horas: function (date, d) {
+                  moment.locale('pt-BR');
+                  horas = date.split(':');
+                  console.log(d);
+                  return moment({hour: horas[0], minute: horas[1]}).add(d, 'h').format('HH:mm')
+                            + ' - '
+                            + moment({hour: horas[0], minute: horas[1]}).add(d + 1, 'h').format('HH:mm');
               }
             },
             methods: {
+                getIntervaloHoras: function(horaInicio, horaFim) {
+                    let inicio = moment(horaInicio, "HH:mm");
+                    let fim = moment(horaFim, "HH:mm");
+
+                    return fim.diff(inicio, 'hours');
+                },
                 getColaboradores: function() {
                   this.loading = true;
                   this.$http.get('/api/colaborador/')
