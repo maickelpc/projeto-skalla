@@ -69,9 +69,27 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
     serializer_class = EscalaColaboradorSerializer
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ()
-    filter_fields = ['escala','colaborador']
+    filter_fields = ['id','escala','colaborador']
     ordering_fields = '__all__'
     parser_classes = [JSONParser]
+
+    def get_queryset(self):
+
+        dataInicial = self.request.query_params.get('dataInicial', None)
+        dataFinal  = self.request.query_params.get('dataFinal', None)
+
+        queryset = EscalaColaborador.objects.order_by('dataInicio').all()
+        if dataInicial:
+            dataInicial = datetime.datetime.strptime(dataInicial, '%Y-%m-%d')
+            queryset = queryset.filter(dataInicio__gte=dataInicial)
+
+
+        if dataFinal:
+            dataFinal = datetime.datetime.strptime(dataFinal, '%Y-%m-%d') + datetime.timedelta(days=1)
+            queryset = queryset.filter(dataInicio__lt=dataFinal)
+
+
+        return queryset
 
     @action(methods=['post'], detail=False)
     def confirma(self, request):

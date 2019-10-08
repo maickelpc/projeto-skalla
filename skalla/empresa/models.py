@@ -80,12 +80,14 @@ class Colaborador(User):
         return self.email
 
     def save(self, *args, **kwargs):
+        novo = False
         if self.id == None:
+            novo = True
             self.is_staff = True;
             self.set_password('123456')
 
         super().save(*args, **kwargs)
-        if self.id == None:
+        if novo:
             config = Configuracao.objects.first()
             config.grupoColaborador.user_set.add(self)
 
@@ -111,5 +113,3 @@ class PeriodoInativo(models.Model):
         verbose_name = "Período de Inatividade"
         verbose_name_plural = "Períodos de Inatividade"
         ordering = ['dataRegistro']
-
-

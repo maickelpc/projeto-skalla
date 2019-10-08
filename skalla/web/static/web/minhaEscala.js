@@ -18,20 +18,39 @@ var app = new Vue({
       escalas: [],
       total: 0,
       carregando: false,
-      filtro: {},
-      escalaConfirma: {}
+      filtroId: null,
+      filtroDataInicial: moment().format("YYYY-MM-DD"),
+      filtroDataFinal: moment().add(1, 'M').format("YYYY-MM-DD"),
+      escalaConfirma: {},
+      paginacao: {page: 1},
   },
    created: function() {
     this.buscar();
-    console.log("Criado");
+//    console.log("Criado");
   },
   methods: {
 
-    buscar: function() {
+    buscar: function(pagina = null) {
+
+        if(pagina){
+            this.paginacao.page = pagina;
+        };
         this.carregando = true;
         let agora = moment();
-        this.$http.get(`/api/escala-colaborador/?colaborador=${userId}`)
+        let url = `/api/escala-colaborador/?colaborador=${userId}&page=${this.paginacao.page}`;
+
+        if(this.filtroId)
+            url += `&id=${this.filtroId}`;
+
+        if(this.filtroDataInicial)
+            url += `&dataInicial=${this.filtroDataInicial}`;
+
+        if(this.filtroDataFinal)
+            url += `&dataFinal=${this.filtroDataFinal}`;
+
+        this.$http.get(url)
         .then( response =>  {
+          this.paginacao = this.gerarPaginacao( response.body.count, this.paginacao.page);
           this.total = response.body.count;
           this.escalas = response.body.results.map(x => {
             x.dataInicio = moment(x.dataInicio);
@@ -51,9 +70,22 @@ var app = new Vue({
     },
 
 
+    gerarPaginacao: function(total, pagina){
+        let p = {
+            page: pagina,
+            totalItens: total,
+            totalPaginas: Math.ceil(total / 20),
+            paginas: []
+        };
+        for(let i = 1; i <= p.totalPaginas; i++){
+            p.paginas.push(i);
+        }
+        //console.log(p);
+        return p;
+    },
+
      confirmaEscala: function(escala) {
 
-        console.log(escala);
         this.carregando = true;
 
         let headers = {
@@ -115,6 +147,21 @@ var app = new Vue({
         this.mensagemSucesso = '';
     }
 
+  },
+  watch : {
+       filtroId: function(val) {
+          this.filtroDataInicial = null;
+          this.filtroDataFinal = null;
+          this.filtroId = val;
+       },
+       filtroDataInicial : function (val) {
+          this.filtroId = null;
+          this.filtroDataInicial = val;
+       },
+       filtroDataFinal : function (val) {
+          this.filtroId = null;
+          this.filtroDataFinal = val;
+       }
   },
   mounted () {
 

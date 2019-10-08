@@ -62,13 +62,13 @@ admin.site.register(Cliente, ClienteAdmin)
 
 
 
-class PontoAlocacaoAdmin(ReverseModelAdmin):
+class PontoAlocacaoAdmin(admin.ModelAdmin):
     list_display = ['id','cliente','nome','endereco']
     list_display_links =  ['id','cliente','nome','endereco']
     search_fields = ['id','nome']
-    inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
+    # inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
     ordering = ["cliente"]
-    inline_type = 'stacked'
+    # inline_type = 'tabular'
     autoComplete = ['cliente']
     inlines = [Turno_PontoAlocacaoInline]
 

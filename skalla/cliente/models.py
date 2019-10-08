@@ -77,7 +77,7 @@ class Turno_PontoAlocacao(models.Model):
 
 
     def __str__(self):
-        return self.turno.descricao + ' - ' + self.pontoAlocacao.nome
+        return self.pontoAlocacao.cliente.nome + '/' + self.turno.descricao + ' - ' + self.pontoAlocacao.nome
 
     class Meta:
         verbose_name = "Turno / Ponto de Alocação"
