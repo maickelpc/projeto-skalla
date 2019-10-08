@@ -3,7 +3,6 @@ from .models import Cliente, PontoAlocacao, Turno, PerfilJornada, Turno_PontoAlo
 from empresa.models import Colaborador
 from empresa.serializers import ColaboradorSerializer
 
-from core.serializers import EnderecoSimpleSerializer
 from rest_framework import serializers
 
 class TurnoSerializer(serializers.ModelSerializer):
@@ -37,10 +36,10 @@ class Turno_PontoAlocacaoSerializer(serializers.ModelSerializer):
 
 class ClienteCompletoSerializer(serializers.ModelSerializer):
     pontosAlocacao = PontoAlocacaoSerializer( many=True, read_only=True, source='cliente_ponto')
-    endereco = EnderecoSimpleSerializer()
     class Meta:
         model = Cliente
-        fields = ['id','nomeFantasia','CNPJ','IE','IM','logo','endereco','telefone','contatoEscala','contatoEscalaFone', 'pontosAlocacao']
+        # fields = ['id','nomeFantasia','CNPJ','IE','IM','logo','endereco','telefone','contatoEscala','contatoEscalaFone', 'pontosAlocacao']
+        fields = ('__all__')
 
 
 class PerfilJornadaSerializer(serializers.ModelSerializer):

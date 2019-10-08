@@ -201,6 +201,10 @@ SUIT_CONFIG = {
             'label': 'Minhas Escalas',
             'icon':'icon-question-sign',
             'url': '/minhaescala/'
+        },        {
+            'label': 'Gestão de Escalas',
+            'icon':'icon-question-sign',
+            'url': '/gestaoescalas/'
         },
         {
             'label':'Empresa' ,

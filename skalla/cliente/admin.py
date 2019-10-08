@@ -1,9 +1,5 @@
 from django.contrib import admin
-from django_reverse_admin import ReverseModelAdmin
 from .models import Escala, Turno, Turno_PontoAlocacao, PontoAlocacao, Cliente, PerfilJornada, EscalaColaborador
-from core.models import Endereco
-# Register your models here.
-
 from django import forms
 from .models import Colaborador
 
@@ -13,7 +9,7 @@ class FormTurno(forms.ModelForm):
 
     class Meta:
         model = Turno_PontoAlocacao
-        fields = ['qtdeColaboradores','pontoAlocacao','turno','periodo']
+        fields = ['qtdeColaboradores','pontoAlocacao']
 
 
 
@@ -49,13 +45,11 @@ class Turno_PontoAlocacaoInline(admin.StackedInline):
 
 
 
-class ClienteAdmin(ReverseModelAdmin):
+class ClienteAdmin(admin.ModelAdmin):
     list_display = ['id','nomeFantasia','nome','CNPJ','contatoEscala','telefone']
     list_display_links = ['id','nomeFantasia','CNPJ','nome','contatoEscala','telefone']
     search_fields = ['id','nomeFantasia','nome','CNPJ','contatoEscala','telefone']
-    inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
-    inline_type = 'stacked'
-    # inlines = [PontoAlocacaoInline]
+    inlines = [PontoAlocacaoInline]
 
 
 admin.site.register(Cliente, ClienteAdmin)
@@ -63,12 +57,10 @@ admin.site.register(Cliente, ClienteAdmin)
 
 
 class PontoAlocacaoAdmin(admin.ModelAdmin):
-    list_display = ['id','cliente','nome','endereco']
-    list_display_links =  ['id','cliente','nome','endereco']
+    list_display = ['id','cliente','nome','cidade']
+    list_display_links =  ['id','cliente','nome','cidade']
     search_fields = ['id','nome']
-    # inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
     ordering = ["cliente"]
-    # inline_type = 'tabular'
     autoComplete = ['cliente']
     inlines = [Turno_PontoAlocacaoInline]
 

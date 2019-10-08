@@ -1,16 +1,15 @@
 from django_reverse_admin import ReverseModelAdmin
 from django.contrib import admin
 from django.contrib.auth.models import User
-from core.models import Endereco
 from .models import Empresa, Area, Departamento, Colaborador, PeriodoInativo
 from .forms import ColaboradorForm
 
 # Register your models here.
-class EnderecoInline(admin.StackedInline):
-    model = Endereco
-    extra = 1
-    max_num = 1
-    autocomplete_fields = ['cidade']
+# class EnderecoInline(admin.StackedInline):
+#     model = Endereco
+#     extra = 1
+#     max_num = 1
+#     autocomplete_fields = ['cidade']
 
 class AreaInline(admin.TabularInline):
     model = Area
@@ -31,13 +30,11 @@ class ColaboradorInline(admin.TabularInline):
     can_delete = False
 
 
-class EmpresaAdmin(ReverseModelAdmin):
+class EmpresaAdmin(admin.ModelAdmin):
     list_display = ['id','nome', 'nomeFantasia','CNPJ']
     list_display_links = ['id', 'nome', 'nomeFantasia', 'CNPJ']
     search_fields = ['id', 'nome', 'nomeFantasia', 'CNPJ']
-    inline_reverse = [('endereco', {'autocomplete_fields': ['cidade']})]
-    inline_type = 'stacked'
-    # inlines = [ColaboradorInline]
+    inlines = [ColaboradorInline]
 
 admin.site.register(Empresa, EmpresaAdmin)
 

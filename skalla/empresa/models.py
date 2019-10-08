@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from core.models import Endereco
+from core.models import Cidade
 from core.models import Configuracao
 from django.contrib.auth.models import User, Group
 
@@ -13,8 +13,19 @@ class Empresa(models.Model):
     CNPJ = models.CharField(max_length=20, unique=True, verbose_name="CNPJ")
     IE = models.CharField(max_length=20, unique=True, verbose_name="Inscrição Estadual")
     logo = models.ImageField(upload_to='logo', blank=True, verbose_name="Logotipo")
-    endereco = models.ForeignKey(Endereco, related_name="endereco_empresa", on_delete=models.PROTECT, verbose_name="Endereço")
+    # endereco = models.ForeignKey(Endereco, related_name="endereco_empresa", on_delete=models.PROTECT, verbose_name="Endereço")
     dataAbertura = models.DateField(verbose_name="Data de Abertura")
+
+    diasAntecedenciaSolicitacao = models.PositiveSmallIntegerField(default=0, verbose_name="Dias antecedencia", help_text="Dias de antecedência para solicitação de alteração")
+
+    cep = models.CharField(max_length=10)
+    logradouro = models.CharField(max_length=50)
+    numero = models.CharField(max_length=6)
+    bairro = models.CharField(max_length=50)
+    complemento = models.CharField(max_length=100, null=True, blank=True)
+    referencia = models.CharField(max_length=100, null=True, blank=True)
+    cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, related_name='empresa_cidade')
+
 
     def __str__(self):
         return self.nomeFantasia
@@ -40,7 +51,7 @@ class Area(models.Model):
 
 class Departamento(models.Model):
     id = models.AutoField(primary_key=True)
-    nome = models.CharField(max_length=50, verbose_name="Área")
+    nome = models.CharField(max_length=50, verbose_name="Departamento")
     area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name="area_departamento", verbose_name="Área")
     responsavel = models.ForeignKey(User, on_delete=models.PROTECT,related_name="user_departamento", verbose_name="Usuário Responsável")
 

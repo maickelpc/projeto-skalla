@@ -11,7 +11,7 @@ Vue.filter('data', function(value) {
 });
 
 var app = new Vue({
-  el: '#minhaescala',
+  el: '#gestaoescalas',
   data: {
       mensagemErro:'',
       mensagemSucesso: '',
