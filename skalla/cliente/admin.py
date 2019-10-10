@@ -35,8 +35,6 @@ class PontoAlocacaoInline(admin.TabularInline):
     can_delete = False
 
 
-
-
 class Turno_PontoAlocacaoInline(admin.StackedInline):
     model = Turno_PontoAlocacao
     extra = 0

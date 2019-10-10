@@ -12,6 +12,12 @@ def index(request):
 def minhaEscala(request):
     return render(request, 'minhaescala.html',{})
 
+
 @login_required(login_url='/admin/login')
 def gestaoEscala(request):
     return render(request, 'gestaoescalas.html',{})
+
+
+@login_required(login_url='/admin/login')
+def solicitacoes(request):
+    return render(request, 'solicitacoes.html',{})

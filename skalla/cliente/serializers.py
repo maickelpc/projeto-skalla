@@ -70,7 +70,7 @@ class EscalaColaboradorSimplificadoSerializer(serializers.ModelSerializer):
 
 class EscalaColaboradorSerializer(serializers.ModelSerializer):
     escala = EscalaSerializer()
-    colaborador = ColaboradorSerializer
+    colaborador = ColaboradorSerializer()
     class Meta:
         model = EscalaColaborador
         fields = ('__all__')

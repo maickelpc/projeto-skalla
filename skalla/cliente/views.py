@@ -118,3 +118,67 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
         escalaColaborador.save()
 
         return Response({'Ok:'})
+
+    @action(methods=['post'], detail=False)
+    def retornosolicitacao(self, request):
+        escala = request.data
+
+        print(escala['id'])
+        escalaColaborador = EscalaColaborador.objects.filter(id=int(escala['id'])).get()
+
+        escalaColaborador.statusSolicitacao = escala['statusSolicitacao'];
+        escalaColaborador.dataRetornoSolicitacaoAlteracao = datetime.datetime.now();
+        escalaColaborador.retornoSolicitacao = escala['retornoSolicitacao'];
+
+        escalaColaborador.save()
+
+        return Response({'Ok:'})
+
+
+    @action(methods=['get'], detail=False)
+    def solicitacoes(self, request):
+
+        dataInicial = self.request.query_params.get('dataInicial', None)
+        dataFinal = self.request.query_params.get('dataFinal', None)
+        id = self.request.query_params.get('id', None)
+        colaborador = self.request.query_params.get('colaborador', None)
+        status = self.request.query_params.get('status', None)
+
+        queryset = EscalaColaborador.objects.order_by('dataInicio').all()
+
+        if id:
+            print("ID")
+            id = int(id)
+            queryset = queryset.filter(pk=id)
+
+        if colaborador:
+            print("COL")
+            colaborador = int(colaborador)
+            queryset = queryset.filter(colaborador=colaborador)
+
+        if status:
+            print("STA")
+            print(status)
+            status = int(status)
+            queryset = queryset.filter(statusSolicitacao=status)
+
+
+        if dataInicial:
+            dataInicial = datetime.datetime.strptime(dataInicial, '%Y-%m-%d')
+        else:
+            dataInicial = datetime.datetime.now() + datetime.timedelta(days=-7)
+        queryset = queryset.filter(dataSolicitacaoAlteracao__gte=dataInicial)
+
+        if dataFinal:
+            dataFinal = datetime.datetime.strptime(dataFinal, '%Y-%m-%d') + datetime.timedelta(days=1)
+        else:
+            dataFinal = datetime.datetime.now() + datetime.timedelta(days=1)
+        queryset = queryset.filter(dataSolicitacaoAlteracao__lt=dataFinal)
+
+
+
+        dados = queryset.all()
+        serializer = EscalaColaboradorSerializer(dados, many=True)
+
+        return Response(serializer.data)
+

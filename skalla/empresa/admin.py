@@ -35,6 +35,7 @@ class EmpresaAdmin(admin.ModelAdmin):
     list_display_links = ['id', 'nome', 'nomeFantasia', 'CNPJ']
     search_fields = ['id', 'nome', 'nomeFantasia', 'CNPJ']
     inlines = [ColaboradorInline]
+    autocomplete_fields = ['cidade']
 
 admin.site.register(Empresa, EmpresaAdmin)
 
@@ -69,7 +70,7 @@ class PeriodoInativoInline(admin.TabularInline):
 class ColaboradorAdmin(admin.ModelAdmin):
     list_display = ['id','first_name','last_name','departamento','email']
     list_display_links = ['id','first_name','last_name','departamento','email']
-    search_fields = ['id','first_name','last_name','departamento','email']
+    search_fields = ['first_name','last_name','email']
     autocomplete_fields = ['departamento','empresa']
     form = ColaboradorForm
     inlines = [PeriodoInativoInline]
