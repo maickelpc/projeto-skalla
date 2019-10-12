@@ -39,7 +39,7 @@ class Turno_PontoAlocacaoInline(admin.StackedInline):
     model = Turno_PontoAlocacao
     extra = 0
     autocomplete_fields = ['turno']
-    form = FormTurno
+    # form = FormTurno
 
 
 
@@ -60,7 +60,7 @@ class PontoAlocacaoAdmin(admin.ModelAdmin):
     list_display_links =  ['id','cliente','nome','cidade']
     search_fields = ['id','nome']
     ordering = ["cliente"]
-    autoComplete = ['cliente','cidade']
+    autocomplete_fields = ['cliente','cidade']
     inlines = [Turno_PontoAlocacaoInline]
 
 
