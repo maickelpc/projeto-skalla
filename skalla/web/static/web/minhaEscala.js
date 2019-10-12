@@ -63,6 +63,7 @@ var app = new Vue({
           });
 
         }).catch( erro => {
+            this.mensagemErro = "Erro Ao buscar a escala:\n " + erro.body;
             console.log(erro);
         })
         .finally(() => {
@@ -97,9 +98,10 @@ var app = new Vue({
         .then( response =>  {
             escala.status = 1;
             escala.dataConfirmacao = moment();
-
+            this.mensagemSucesso = "Escala confirmada!";
 
         }).catch( erro => {
+            this.mensagemErro = "Erro Ao Confirmar a escala:\n " + erro.body;
             console.log(erro);
         })
         .finally(() => {
@@ -120,9 +122,10 @@ var app = new Vue({
             escala.statusSolicitacao = 1;
             escala.dataSolicitacaoAlteracao = moment();
             escala.statusSolicitataoFormatado = 'Pendente';
+            this.mensagemSucesso = "Solicitação Registrada com sucesso!"
 
         }).catch( erro => {
-
+            this.mensagemErro = "Erro Ao gerar a escala:\n " + erro.body;
             console.log(erro);
         })
         .finally(() => {

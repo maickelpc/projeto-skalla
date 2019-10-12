@@ -182,8 +182,8 @@ CORS_ALLOW_HEADERS = ('*')
 SUIT_CONFIG = {
     # header
     'ADMIN_NAME': 'SkAlla',
-    # 'HEADER_DATE_FORMAT': 'l, j. F Y',
-    # 'HEADER_TIME_FORMAT': 'H:i',
+    'HEADER_DATE_FORMAT': 'l, j F Y',
+    #'HEADER_TIME_FORMAT': 'H:i',
 
     # forms
     # 'SHOW_REQUIRED_ASTERISK': True,  # Default True

@@ -1,6 +1,7 @@
 
 from django.shortcuts import render
 import datetime
+import pytz
 from datetime import timedelta
 from django.shortcuts import render
 import json
@@ -128,8 +129,18 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
     def registrasolicitacao(self, request):
         escala = request.data
 
-        print(escala['id'])
+
+
         escalaColaborador = EscalaColaborador.objects.filter(id=int(escala['id'])).get()
+        dias = escalaColaborador.colaborador.empresa.diasAntecedenciaSolicitacao
+        datalimite = escalaColaborador.dataInicio + datetime.timedelta(days=-dias)
+        agora = pytz.UTC.localize(datetime.datetime.now() + datetime.timedelta(hours=1))
+
+        #Valida se a escala ainda está em prazo de receber solicitação
+        if agora > datalimite:
+            return Response('Esta escala não pode receber solicitações, pois ultrapassou o tempo limite: ' + datalimite.strftime("%d/%m/%Y %H:%M:%S"), 400)
+
+
         escalaColaborador.statusSolicitacao = 1;
         escalaColaborador.dataSolicitacaoAlteracao = datetime.datetime.now();
         escalaColaborador.solicitacaoAlteracao = escala['solicitacaoAlteracao'];
