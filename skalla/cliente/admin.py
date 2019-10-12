@@ -48,6 +48,7 @@ class ClienteAdmin(admin.ModelAdmin):
     list_display_links = ['id','nomeFantasia','CNPJ','nome','contatoEscala','telefone']
     search_fields = ['id','nomeFantasia','nome','CNPJ','contatoEscala','telefone']
     inlines = [PontoAlocacaoInline]
+    autocomplete_fields = ['cidade']
 
 
 admin.site.register(Cliente, ClienteAdmin)
@@ -59,13 +60,11 @@ class PontoAlocacaoAdmin(admin.ModelAdmin):
     list_display_links =  ['id','cliente','nome','cidade']
     search_fields = ['id','nome']
     ordering = ["cliente"]
-    autoComplete = ['cliente']
+    autoComplete = ['cliente','cidade']
     inlines = [Turno_PontoAlocacaoInline]
 
 
 admin.site.register(PontoAlocacao, PontoAlocacaoAdmin)
-
-
 
 
 class EscalaAdmin(admin.ModelAdmin):

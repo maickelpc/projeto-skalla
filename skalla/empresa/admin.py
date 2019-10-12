@@ -4,13 +4,6 @@ from django.contrib.auth.models import User
 from .models import Empresa, Area, Departamento, Colaborador, PeriodoInativo
 from .forms import ColaboradorForm
 
-# Register your models here.
-# class EnderecoInline(admin.StackedInline):
-#     model = Endereco
-#     extra = 1
-#     max_num = 1
-#     autocomplete_fields = ['cidade']
-
 class AreaInline(admin.TabularInline):
     model = Area
     extra = 0
