@@ -78,15 +78,34 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
         dataInicial = self.request.query_params.get('dataInicial', None)
         dataFinal  = self.request.query_params.get('dataFinal', None)
 
+        status = self.request.query_params.get('status', None)
+
         queryset = EscalaColaborador.objects.order_by('dataInicio').all()
         if dataInicial:
+            print(dataInicial)
             dataInicial = datetime.datetime.strptime(dataInicial, '%Y-%m-%d')
             queryset = queryset.filter(dataInicio__gte=dataInicial)
 
 
         if dataFinal:
+            print(dataFinal)
             dataFinal = datetime.datetime.strptime(dataFinal, '%Y-%m-%d') + datetime.timedelta(days=1)
             queryset = queryset.filter(dataInicio__lt=dataFinal)
+
+
+        if status and int(status) > -1:
+            # Status: -1: Todos | 0: Pendente | 1: Confirmado | 4: Executado | 2: Cancelado | 3 - Rejeitado
+
+            status = int(status)
+            print(status);
+            hoje = datetime.datetime.now()
+            if status == 4:
+                print("DataInicio ANTERIOR á hoje")
+                queryset = queryset.filter(dataInicio__lt=hoje).exclude(status=2).exclude(status=3)
+            else:
+                print("DataInicio POSTERIOR á hoje")
+                queryset = queryset.filter(dataInicio__gt=hoje).filter(status=status)
+
 
 
         return queryset
@@ -142,26 +161,23 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
         dataFinal = self.request.query_params.get('dataFinal', None)
         id = self.request.query_params.get('id', None)
         colaborador = self.request.query_params.get('colaborador', None)
-        status = self.request.query_params.get('status', None)
+        statusSolicitacao = self.request.query_params.get('statusSolicitacao', None)
+
 
         queryset = EscalaColaborador.objects.order_by('dataInicio').all()
 
         if id:
-            print("ID")
             id = int(id)
             queryset = queryset.filter(pk=id)
 
         if colaborador:
-            print("COL")
             colaborador = int(colaborador)
             queryset = queryset.filter(colaborador=colaborador)
 
-        if status:
-            print("STA")
-            print(status)
-            status = int(status)
-            queryset = queryset.filter(statusSolicitacao=status)
 
+        if statusSolicitacao:
+            statusSolicitacao = int(statusSolicitacao)
+            queryset = queryset.filter(statusSolicitacao=statusSolicitacao)
 
         if dataInicial:
             dataInicial = datetime.datetime.strptime(dataInicial, '%Y-%m-%d')
@@ -174,8 +190,6 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
         else:
             dataFinal = datetime.datetime.now() + datetime.timedelta(days=1)
         queryset = queryset.filter(dataSolicitacaoAlteracao__lt=dataFinal)
-
-
 
         dados = queryset.all()
         serializer = EscalaColaboradorSerializer(dados, many=True)

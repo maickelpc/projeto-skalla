@@ -48,12 +48,23 @@
                             <th>Código</th>
                             <th>Data Inicial</th>
                             <th>Data Final</th>
+                            <th>Status</th>
                             <td></td>
                         </tr>
                         <tr>
                             <td><input type="text" v-model="filtroId" placeholder="Código da escala"></td>
                             <td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td>
                             <td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td>
+
+                            <td>
+                                <select v-model="filtroStatus">
+                                    <option value="-1">Todos</option>
+                                    <option value="0">Pendente</option>
+                                    <option value="1">Confirmado</option>
+                                    <option value="4">Executado</option>
+                                    <option value="3">Cancelado</option>
+                                </select>
+                            </td>
                             <td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td>
                         </tr>
                     </table>

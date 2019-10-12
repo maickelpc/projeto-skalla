@@ -91,7 +91,7 @@ var app = new Vue({
         if(filtroColaboradorId > 0)
             url += `colaborador=${filtroColaboradorId}&`;
         if(this.filtroStatus > 0)
-            url += `status=${this.filtroStatus}&`;
+            url += `statusSolicitacao=${this.filtroStatus}&`;
 
         this.$http.get(url)
         .then( response =>  {
