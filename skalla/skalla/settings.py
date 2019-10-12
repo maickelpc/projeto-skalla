@@ -27,10 +27,12 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = [config('ALLOWED_HOSTS')]
 
 
-# Application definition
-SHARED_APPS = [
-    'core'
-]
+## Application definition
+#SHARED_APPS = [
+#    'core'
+#]
+
+
 INSTALLED_APPS = [
     # 'tenant_schemas',
     'suit',
@@ -52,7 +54,7 @@ INSTALLED_APPS = [
 ]
 
 
-TENANT_APPS = ['teste']
+#TENANT_APPS = ['teste']
 
 # TENANT_MODEL = 'core.model.ClienteSistema'
 
