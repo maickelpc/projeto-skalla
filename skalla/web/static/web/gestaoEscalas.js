@@ -11,14 +11,13 @@ Vue.filter('data', function(value) {
 });
 
 var app = new Vue({
-  el: '#minhaescala',
+  el: '#gestaoescalas',
   data: {
       mensagemErro:'',
       mensagemSucesso: '',
       escalas: [],
       total: 0,
       carregando: false,
-      filtroStatus: 0,
       filtroId: null,
       filtroDataInicial: moment().format("YYYY-MM-DD"),
       filtroDataFinal: moment().add(1, 'M').format("YYYY-MM-DD"),
@@ -38,7 +37,7 @@ var app = new Vue({
         };
         this.carregando = true;
         let agora = moment();
-        let url = `/api/escala-colaborador/?colaborador=${userId}&page=${this.paginacao.page}&status=${this.filtroStatus}`;
+        let url = `/api/escala-colaborador/?colaborador=${userId}&page=${this.paginacao.page}`;
 
         if(this.filtroId)
             url += `&id=${this.filtroId}`;

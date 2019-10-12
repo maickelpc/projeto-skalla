@@ -40,42 +40,41 @@
         <div class="toolbar-content clearfix">
             <div class="clearfix">
                 <h3>Filtro</h3>
-                <form class="form-inline">
+                <div style="max-width: 100%">
 
-                    <div class="search-container">
                     <table>
                         <tr>
-                            <th>Código</th>
+                            <th>Escala</th>
+                            <th>Colaborador</th>
                             <th>Data Inicial</th>
                             <th>Data Final</th>
-                            <th>Status</th>
+                            <th>Status Solicitação</th>
                             <td></td>
                         </tr>
                         <tr>
                             <td><input type="text" v-model="filtroId" placeholder="Código da escala"></td>
+                            <td>
+
+                                <select name="colaborador" v-model="filtroColaboradorId" id="id_colaborador" data-placeholder="Selecione um colaborador">
+
+                                </select>
+
+                            </td>
                             <td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td>
                             <td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td>
-
                             <td>
                                 <select v-model="filtroStatus">
-                                    <option value="-1">Todos</option>
-                                    <option value="0">Pendente</option>
-                                    <option value="1">Confirmado</option>
-                                    <option value="4">Executado</option>
-                                    <option value="3">Cancelado</option>
+                                    <option value="0" >Todos</option>
+                                    <option value="1" selected>Pendente</option>
+                                    <option value="2">Aceito</option>
+                                    <option value="3">Recusado</option>
                                 </select>
                             </td>
                             <td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td>
                         </tr>
                     </table>
 
-
-
-
-
-                    </div>
-
-                </form>
+                </div>
             </div>
         </div>
     <hr>
@@ -86,7 +85,11 @@
                     <h1>Minhas escalas</h1>
                     <div class="">
                         <div style="margin-top: 10px" class="" v-for="escala in escalas">
+
                             <div style="border: 1px solid; padding:15px; width: 100%" class="card" >
+                                <div class="card-header" >
+                                    <h2>[[escala.colaborador.first_name]] [[escala.colaborador.last_name]]</h2>
+                                </div>
 
                               <div class="card-body" >
                                 <h4  class="card-title">
@@ -126,7 +129,7 @@
                                           <td class="">[[escala.dataCancelamento | datahora]]</td>
                                       </tr>
 
-                                      <tr v-if="escala.statusSolicitacao">
+                                      <tr v-if="escala.statusSolicitacao" style="border-top: #000 1px solid">
                                           <td class="negrito">Alteração solicitada em</td>
                                           <td class="">[[escala.dataSolicitacaoAlteracao | datahora]]</td>
                                       </tr>
@@ -146,9 +149,8 @@
                                   </table>
 
                                   <div style="text-align: right">
-                                      <button v-if="! escala.executada && escala.status === 0 " v-on:click="abreModal(escala)" data-toggle="modal" data-target="#modalConfirmaParticipacao" class="btn btn-primary">Confirmar</button>
-<!--                                      <button v-if="! escala.executada && escala.status === 0 " v-on:click="abreModal(escala)" data-toggle="modal" data-target="#" class="btn btn-danger">Recusar</button>-->
-                                      <button v-if="! escala.statusSolicitacao  && ! escala.executada && escala.status === 1 " v-on:click="abreModal(escala)" data-toggle="modal" data-target="#modalSolicitacao" class="btn btn-warning">Solicitar Alteração</button>
+                                      <button v-if="! escala.executada && escala.statusSolicitacao === 1 " v-on:click="abreModalAceitar(escala)" data-toggle="modal" data-target="#modal" class="btn btn-primary">Aceitar</button>
+                                      <button v-if="! escala.executada && escala.statusSolicitacao === 1 " v-on:click="abreModalRejeitar(escala)" data-toggle="modal" data-target="#modal" class="btn btn-danger">Rejeitar</button>
                                   </div>
 
                               </div>
@@ -182,76 +184,20 @@
         </div>
 
 
-
-        <!--    Modal  Confirma  Escala -->
-<div class="modal fade" id="modalConfirmaParticipacao" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Confirmar Escala</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-            <h4 v-if="escalaConfirma.dataInicio" class="card-title">[[escalaConfirma.dataInicio | datahora]]h - [[escalaConfirma.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]] / [[escalaConfirma.escala.turnoPonto.pontoAlocacao.nome]]</h4>
-
-
-              <table>
-                  <tr v-if="escalaConfirma.escala">
-                      <td class="negrito">Jornada</td>
-                      <td class="">[[escalaConfirma.escala.turnoPonto.turno.descricao]] - [[escalaConfirma.escala.turnoPonto.turno.periodo]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.horas">
-                      <td class="negrito">Data</td>
-                      <td class=""><span class="badge badge-dark">[[ escalaConfirma.horas ]]:00h </span> [[escalaConfirma.dataInicio | datahora]]  até [[escalaConfirma.dataFim | datahora]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.dataRegistro">
-                      <td  class="negrito">Registrado em</td>
-                      <td class="">[[escalaConfirma.dataRegistro | datahora]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.dataConfirmacao">
-                      <td class="negrito">Confirmado em</td>
-                      <td class="">[[escalaConfirma.dataConfirmacao | datahora]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.dataCancelamento">
-                      <td class="negrito">Cancelado em</td>
-                      <td class="">[[escalaConfirma.dataCancelamento | datahora]]</td>
-                  </tr>
-
-
-              </table>
-
-          </div>
-
-      <div class="modal-footer">
-          <span v-if="escalaConfirma.status === 1" class="badge badge-info">Confirmada</span>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Sair</button>
-          <button type="button" v-if="escalaConfirma.status !== 1" class="btn btn-primary" v-on:click="confirmaEscala(escalaConfirma)">Confirmar</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!--    Modal  Confirma  Escala -->
-
 <!--    Modal  Solicitação -->
-<div class="modal fade" id="modalSolicitacao" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampsbel">Solicitar Alteração</h5>
+        <h5 class="modal-title" id="exampsbel">Retorno de Solicitação</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
+
             <h4 v-if="escalaConfirma.dataInicio" class="card-title">[[escalaConfirma.dataInicio | datahora]]h - [[escalaConfirma.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]] / [[escalaConfirma.escala.turnoPonto.pontoAlocacao.nome]]</h4>
-
-
+            <div v-if="escalaConfirma.horas"><h5>Solicitante: [[escalaConfirma.colaborador.first_name ]] [[escalaConfirma.colaborador.last_name ]]</h5></div>
               <table>
                   <tr v-if="escalaConfirma.escala">
                       <td class="negrito">Jornada</td>
@@ -273,115 +219,57 @@
                       <td class="">[[escalaConfirma.dataConfirmacao | datahora]]</td>
                   </tr>
 
-                  <tr v-if="escalaConfirma.dataCancelamento">
-                      <td class="negrito">Cancelado em</td>
-                      <td class="">[[escalaConfirma.dataCancelamento | datahora]]</td>
+                  <tr style="border-top:#000 1px solid" v-if="escalaConfirma.dataConfirmacao">
+                      <td class="negrito">Solicitado em</td>
+                      <td class="">[[escalaConfirma.dataSolicitacaoAlteracao | datahora]]</td>
                   </tr>
-
+                  <tr >
+                      <td class="negrito">Solicitação</td>
+                      <td class="">[[escalaConfirma.solicitacaoAlteracao ]]</td>
+                  </tr>
 
               </table>
             <hr/>
             <div class="form-group">
-                <label class="form-label">Descreva a sua Solicitação </label>
-                <input class="form-control" name="teste" type="text" v-model="escalaConfirma.solicitacaoAlteracao" autofocus="on" autocomplete="off" max-length="255" required="required" />
+                <label class="form-label">Retorno </label>
+                <input class="form-control" name="teste" type="text" v-model="retornoSolicitacao" autofocus="on" autocomplete="off" max-length="255" required="required" />
             </div>
 
+            <div class="alert alert-success" v-if="mensagemSucesso.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemSucesso]]
+            </div>
+            <div class="alert alert-danger" v-if="mensagemErro.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemErro]]
+            </div>
 
           </div>
 
       <div class="modal-footer">
-          <span v-if="escalaConfirma.statusSolicitacao" class="badge badge-info">Solicitação Enviada</span>
+
+
+          <button :disabled="!retornoSolicitacao || retornoSolicitacao.length <= 0"
+                  v-if="aceitarSolicitacao && escalaConfirma.statusSolicitacao == 1" type="button" class="btn btn-primary"
+                  v-on:click="enviarRetornoSolicitacao()">Aceitar Solicitação</button>
+
+          <button :disabled="!retornoSolicitacao || retornoSolicitacao.length <= 0"
+                  v-if="!aceitarSolicitacao && escalaConfirma.statusSolicitacao == 1" type="button" class="btn btn-danger"
+                  v-on:click="enviarRetornoSolicitacao()">Recusar Solicitação</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Sair</button>
-          <button :disabled="!escalaConfirma.solicitacaoAlteracao || escalaConfirma.solicitacaoAlteracao.length <= 0"
-                  v-if="!escalaConfirma.statusSolicitacao" type="button" class="btn btn-primary"
-                  v-on:click="enviaSolicitacao(escalaConfirma)">Enviar Solicitação</button>
       </div>
     </div>
   </div>
 </div>
 <!--    Modal  Solicitação  -->
-
-
-        <!--    Modal  Solicitação -->
-<div class="modal fade" id="modalSolicitacao" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampsbel">Solicitar Alteração</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-            <h4 v-if="escalaConfirma.dataInicio" class="card-title">[[escalaConfirma.dataInicio | datahora]]h - [[escalaConfirma.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]] / [[escalaConfirma.escala.turnoPonto.pontoAlocacao.nome]]</h4>
-
-
-              <table>
-                  <tr v-if="escalaConfirma.escala">
-                      <td class="negrito">Jornada</td>
-                      <td class="">[[escalaConfirma.escala.turnoPonto.turno.descricao]] - [[escalaConfirma.escala.turnoPonto.turno.periodo]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.horas">
-                      <td class="negrito">Data</td>
-                      <td class=""><span class="badge badge-dark">[[ escalaConfirma.horas ]]:00h </span> [[escalaConfirma.dataInicio | datahora]]  até [[escalaConfirma.dataFim | datahora]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.dataRegistro">
-                      <td  class="negrito">Registrado em</td>
-                      <td class="">[[escalaConfirma.dataRegistro | datahora]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.dataConfirmacao">
-                      <td class="negrito">Confirmado em</td>
-                      <td class="">[[escalaConfirma.dataConfirmacao | datahora]]</td>
-                  </tr>
-
-                  <tr v-if="escalaConfirma.dataCancelamento">
-                      <td class="negrito">Cancelado em</td>
-                      <td class="">[[escalaConfirma.dataCancelamento | datahora]]</td>
-                  </tr>
-
-
-              </table>
-            <hr/>
-            <div class="form-group">
-                <label class="form-label">Descreva a sua Solicitação </label>
-                <input class="form-control" name="teste" type="text" v-model="escalaConfirma.solicitacaoAlteracao" autofocus="on" autocomplete="off" max-length="255" required="required" />
-            </div>
-
-
-          </div>
-
-      <div class="modal-footer">
-          <span v-if="escalaConfirma.statusSolicitacao" class="badge badge-info">Solicitação Enviada</span>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Sair</button>
-          <button :disabled="!escalaConfirma.solicitacaoAlteracao || escalaConfirma.solicitacaoAlteracao.length <= 0"
-                  v-if="!escalaConfirma.statusSolicitacao" type="button" class="btn btn-primary"
-                  v-on:click="enviaSolicitacao(escalaConfirma)">Enviar Solicitação</button>
-      </div>
-    </div>
-  </div>
 </div>
-<!--    Modal  Solicitação  -->
-
-
-
-
-
-
-
-</div>
-
-
-
 
 
 <script type="application/javascript">
     var token = '{{csrf_token}}';
     var userId = "{{request.user.id}}";
 </script>
-<script type="application/javascript" src="{% static 'web/minhaEscala.js' %}"></script>
+<script type="application/javascript" src="{% static 'web/solicitacoes.js' %}"></script>
 
 {% endblock %}
 

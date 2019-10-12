@@ -165,10 +165,10 @@ REST_FRAMEWORK = {
     ),
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 50,
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
+    'PAGE_SIZE': 20,
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'rest_framework.renderers.JSONRenderer',
+    # ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
     )
@@ -203,6 +203,10 @@ SUIT_CONFIG = {
             'label': 'Minhas Escalas',
             'icon':'icon-question-sign',
             'url': '/minhaescala/'
+        },        {
+            'label': 'Solicitações',
+            'icon':'icon-question-sign',
+            'url': '/solicitacoes/'
         },
         {
             'label':'Empresa' ,

@@ -22,7 +22,7 @@
 </style>
 
 
-    <div id="minhaescala">
+    <div id="gestaoescalas">
 
         <div class="tela-inteira" v-if="carregando">
              <div class="lds-hourglass"> </div>
@@ -48,23 +48,12 @@
                             <th>Código</th>
                             <th>Data Inicial</th>
                             <th>Data Final</th>
-                            <th>Status</th>
                             <td></td>
                         </tr>
                         <tr>
                             <td><input type="text" v-model="filtroId" placeholder="Código da escala"></td>
                             <td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td>
                             <td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td>
-
-                            <td>
-                                <select v-model="filtroStatus">
-                                    <option value="-1">Todos</option>
-                                    <option value="0">Pendente</option>
-                                    <option value="1">Confirmado</option>
-                                    <option value="4">Executado</option>
-                                    <option value="3">Cancelado</option>
-                                </select>
-                            </td>
                             <td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td>
                         </tr>
                     </table>
@@ -83,7 +72,7 @@
             <div id="content-main">
                 <div class="inner-center-column" style="width: 125%">
 
-                    <h1>Minhas escalas</h1>
+                    <h1>Gestão de Escalas</h1>
                     <div class="">
                         <div style="margin-top: 10px" class="" v-for="escala in escalas">
                             <div style="border: 1px solid; padding:15px; width: 100%" class="card" >
@@ -381,7 +370,7 @@
     var token = '{{csrf_token}}';
     var userId = "{{request.user.id}}";
 </script>
-<script type="application/javascript" src="{% static 'web/minhaEscala.js' %}"></script>
+<script type="application/javascript" src="{% static 'web/gestaoEscalas.js' %}"></script>
 
 {% endblock %}
 

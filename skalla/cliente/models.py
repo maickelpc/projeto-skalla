@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from core.models import Endereco
+from core.models import Cidade
 from empresa.models import Colaborador
 
 STATUS = (
@@ -18,12 +18,20 @@ class Cliente(models.Model):
     IE = models.CharField(max_length=30, unique=True, verbose_name="Inscrição Estadual")
     IM = models.CharField(max_length=30, unique=True, verbose_name="Inscrição Municipal", null=True)
     logo = models.ImageField(upload_to='logo', blank=True, verbose_name="Logotipo")
-    endereco = models.ForeignKey(Endereco, related_name="endereco_cliente", on_delete=models.PROTECT, verbose_name="Endereço")
+    # endereco = models.ForeignKey(Endereco, related_name="endereco_cliente", on_delete=models.PROTECT, verbose_name="Endereço")
     telefone = models.CharField(max_length=20, unique=True, verbose_name="Telefone")
     contatoEscala = models.CharField(max_length=50, unique=True, verbose_name="Contato para escalas")
     contatoEscalaFone = models.CharField(max_length=20, unique=True, verbose_name="Telefone contato para escalas")
     FinanceiroContato = models.CharField(max_length=50, unique=True, verbose_name="Contato financeiro")
     FinanceiroEmail = models.CharField(max_length=255, unique=True, verbose_name="Email financeiro")
+
+    cep = models.CharField(max_length=10)
+    logradouro = models.CharField(max_length=50)
+    numero = models.CharField(max_length=6)
+    bairro = models.CharField(max_length=50)
+    complemento = models.CharField(max_length=100, null=True, blank=True)
+    referencia = models.CharField(max_length=100, null=True, blank=True)
+    cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, related_name='cliente_cidade')
 
     def __str__(self):
         return self.nomeFantasia
@@ -39,7 +47,15 @@ class PontoAlocacao(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, verbose_name="Cliente", related_name='cliente_ponto')
     nome = models.CharField(max_length=50, verbose_name="Ponto de Alocação")
     descricao = models.TextField( verbose_name="Descrição do Local")
-    endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, verbose_name="Endereço")
+    # endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, verbose_name="Endereço")
+
+    cep = models.CharField(max_length=10)
+    logradouro = models.CharField(max_length=50)
+    numero = models.CharField(max_length=6)
+    bairro = models.CharField(max_length=50)
+    complemento = models.CharField(max_length=100, null=True, blank=True)
+    referencia = models.CharField(max_length=100, null=True, blank=True)
+    cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, related_name='ponto_cidade')
 
     class Meta:
         verbose_name = "Ponto de Alocação"
@@ -77,7 +93,7 @@ class Turno_PontoAlocacao(models.Model):
 
 
     def __str__(self):
-        return self.turno.descricao + ' - ' + self.pontoAlocacao.nome
+        return self.pontoAlocacao.cliente.nome + '/' + self.turno.descricao + ' - ' + self.pontoAlocacao.nome
 
     class Meta:
         verbose_name = "Turno / Ponto de Alocação"
@@ -127,7 +143,7 @@ class EscalaColaborador(models.Model):
     dataRegistro = models.DateTimeField(auto_now_add=True)
     dataConfirmacao = models.DateTimeField(null=True, blank=True)
     dataCancelamento = models.DateTimeField(null=True, blank=True)
-    status = models.PositiveSmallIntegerField(choices=STATUS, default=0)
+    status = models.PositiveSmallIntegerField(choices=STATUS, default=0) # 0 - Agendado - 1 - Confirmado - 2 - Rejeitado - 3 - Cancelado
     dataSolicitacaoAlteracao = models.DateTimeField(null=True, blank=True)
     dataRetornoSolicitacaoAlteracao = models.DateTimeField(null=True, blank=True)
     solicitacaoAlteracao = models.CharField(max_length=255, blank=True, null=True)

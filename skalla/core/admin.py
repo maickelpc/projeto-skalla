@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Pais, Estado, Cidade, Endereco, Configuracao
+from .models import Pais, Estado, Cidade, Configuracao
 
 # Register your models here.
 
