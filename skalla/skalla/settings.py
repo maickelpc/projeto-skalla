@@ -27,10 +27,12 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = [config('ALLOWED_HOSTS')]
 
 
-# Application definition
-SHARED_APPS = [
-    'core'
-]
+## Application definition
+#SHARED_APPS = [
+#    'core'
+#]
+
+
 INSTALLED_APPS = [
     # 'tenant_schemas',
     'suit',
@@ -52,7 +54,7 @@ INSTALLED_APPS = [
 ]
 
 
-TENANT_APPS = ['teste']
+#TENANT_APPS = ['teste']
 
 # TENANT_MODEL = 'core.model.ClienteSistema'
 
@@ -180,8 +182,8 @@ CORS_ALLOW_HEADERS = ('*')
 SUIT_CONFIG = {
     # header
     'ADMIN_NAME': 'SkAlla',
-    # 'HEADER_DATE_FORMAT': 'l, j. F Y',
-    # 'HEADER_TIME_FORMAT': 'H:i',
+    'HEADER_DATE_FORMAT': 'l, j F Y',
+    #'HEADER_TIME_FORMAT': 'H:i',
 
     # forms
     # 'SHOW_REQUIRED_ASTERISK': True,  # Default True
@@ -201,6 +203,10 @@ SUIT_CONFIG = {
             'label': 'Minhas Escalas',
             'icon':'icon-question-sign',
             'url': '/minhaescala/'
+        },        {
+            'label': 'Solicitações',
+            'icon':'icon-question-sign',
+            'url': '/solicitacoes/'
         },
         {
             'label':'Empresa' ,

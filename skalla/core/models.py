@@ -51,23 +51,23 @@ class Cidade(models.Model):
         unique_together = ('estado', 'nome')
 
 
-class Endereco(models.Model):
-    id = models.AutoField(primary_key=True)
-    descricao = models.CharField(max_length=20)
-    cep = models.CharField(max_length=10)
-    logradouro = models.CharField(max_length=50)
-    numero = models.CharField(max_length=6)
-    bairro = models.CharField(max_length=50)
-    complemento = models.CharField(max_length=100, null=True, blank=True)
-    referencia = models.CharField(max_length=100, null=True, blank=True)
-    cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, related_name='cidade')
-
-    def __str__(self):
-        return self.descricao
-
-    class Meta:
-        verbose_name = "Endereço"
-        verbose_name_plural = "Endereços"
+# class Endereco(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     descricao = models.CharField(max_length=20)
+#     cep = models.CharField(max_length=10)
+#     logradouro = models.CharField(max_length=50)
+#     numero = models.CharField(max_length=6)
+#     bairro = models.CharField(max_length=50)
+#     complemento = models.CharField(max_length=100, null=True, blank=True)
+#     referencia = models.CharField(max_length=100, null=True, blank=True)
+#     cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, related_name='cidade')
+#
+#     def __str__(self):
+#         return self.descricao
+#
+#     class Meta:
+#         verbose_name = "Endereço"
+#         verbose_name_plural = "Endereços"
 
 
 class Configuracao(models.Model):

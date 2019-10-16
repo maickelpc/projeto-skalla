@@ -23,3 +23,12 @@ class ColaboradorViewSet(viewsets.ModelViewSet):
 
     search_fields = ('id','email','username','first_name','last_name')
 
+    def get_queryset(self):
+        data = self.request.query_params.get('data', None)
+
+        queryset = EscalaColaborador.objects.order_by('dataInicio').all()
+        if data:
+            print(data)
+            data = datetime.datetime.strptime(data, '%Y-%m-%d')
+            queryset = Colaborador.objects.exclude(colaborador_periodo__dataInicio__lte=data,colaborador_periodo__dataFim__gte=data)
+        return queryset

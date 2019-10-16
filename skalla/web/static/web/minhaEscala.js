@@ -18,6 +18,7 @@ var app = new Vue({
       escalas: [],
       total: 0,
       carregando: false,
+      filtroStatus: 0,
       filtroId: null,
       filtroDataInicial: moment().format("YYYY-MM-DD"),
       filtroDataFinal: moment().add(1, 'M').format("YYYY-MM-DD"),
@@ -37,7 +38,7 @@ var app = new Vue({
         };
         this.carregando = true;
         let agora = moment();
-        let url = `/api/escala-colaborador/?colaborador=${userId}&page=${this.paginacao.page}`;
+        let url = `/api/escala-colaborador/?colaborador=${userId}&page=${this.paginacao.page}&status=${this.filtroStatus}`;
 
         if(this.filtroId)
             url += `&id=${this.filtroId}`;
@@ -62,6 +63,7 @@ var app = new Vue({
           });
 
         }).catch( erro => {
+            this.mensagemErro = "Erro Ao buscar a escala:\n " + erro.body;
             console.log(erro);
         })
         .finally(() => {
@@ -96,9 +98,10 @@ var app = new Vue({
         .then( response =>  {
             escala.status = 1;
             escala.dataConfirmacao = moment();
-
+            this.mensagemSucesso = "Escala confirmada!";
 
         }).catch( erro => {
+            this.mensagemErro = "Erro Ao Confirmar a escala:\n " + erro.body;
             console.log(erro);
         })
         .finally(() => {
@@ -119,9 +122,10 @@ var app = new Vue({
             escala.statusSolicitacao = 1;
             escala.dataSolicitacaoAlteracao = moment();
             escala.statusSolicitataoFormatado = 'Pendente';
+            this.mensagemSucesso = "Solicitação Registrada com sucesso!"
 
         }).catch( erro => {
-
+            this.mensagemErro = "Erro Ao gerar a escala:\n " + erro.body;
             console.log(erro);
         })
         .finally(() => {
