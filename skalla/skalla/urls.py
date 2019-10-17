@@ -15,6 +15,7 @@ urlpatterns = [
     path('minhaescala/', webview.minhaEscala),
     path('gestaoescalas/', webview.gestaoEscala),
     path('solicitacoes/', webview.solicitacoes),
+    path('escalas/', webview.escalas),
     path('api/', include(RotasApi.rotasApi.urls)),
     path('admin/', admin.site.urls),
 ]

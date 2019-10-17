@@ -14,7 +14,6 @@ from rest_framework.decorators import action
 from django.core.files import temp as tempfile
 from django.core.files.uploadedfile import UploadedFile
 
-
 from .serializers import ClienteCompletoSerializer, \
     ClienteSimpleSerializer, \
     PontoAlocacaoSerializer, \
@@ -23,6 +22,7 @@ from .serializers import ClienteCompletoSerializer, \
     EscalaSimplificadoSerializer, EscalaSerializer, \
     EscalaColaboradorSerializer, EscalaColaboradorSimplificadoSerializer
 from .models import Cliente, PontoAlocacao, PerfilJornada, Turno_PontoAlocacao, EscalaColaborador, Escala
+
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
@@ -58,11 +58,39 @@ class PerfilJornadaViewSet(viewsets.ModelViewSet):
 
 class EscalaViewSet(viewsets.ModelViewSet):
     queryset = Escala.objects.all()
-    serializer_class = EscalaSimplificadoSerializer
+    serializer_class = EscalaSerializer
     filter_backends = (SearchFilter,DjangoFilterBackend)
     search_fields = ()
-    filter_fields = ['turnoPonto','perfil','status']
+    filter_fields = ['id','perfil','status']
     ordering_fields = '__all__'
+
+    def get_queryset(self):
+
+        dataInicial = self.request.query_params.get('dataInicial', None)
+        dataFinal  = self.request.query_params.get('dataFinal', None)
+        cliente  = self.request.query_params.get('cliente', None)
+        pontoAlocacao  = self.request.query_params.get('pontoalocacao', None)
+        # colaborador  = self.request.query_params.get('colaborador', None)
+
+
+        queryset = Escala.objects.order_by('dataInicio').all()
+
+        if dataInicial:
+            dataInicial = datetime.datetime.strptime(dataInicial, '%Y-%m-%d')
+            queryset = queryset.filter(dataInicio__gte=dataInicial)
+
+        if dataFinal:
+            dataFinal = datetime.datetime.strptime(dataFinal, '%Y-%m-%d') + datetime.timedelta(days=1)
+            queryset = queryset.filter(dataInicio__lt=dataFinal)
+
+        if cliente:
+            cliente = int(cliente)
+            queryset = queryset.filter(turnoPonto__pontoAlocacao__cliente=cliente)
+
+        if pontoAlocacao:
+            pontoAlocacao = int(pontoAlocacao)
+            queryset = queryset.filter(turnoPonto__pontoAlocacao=pontoAlocacao)
+        return queryset
 
 
 class EscalaColaboradorViewSet(viewsets.ModelViewSet):
@@ -113,24 +141,17 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False)
     def confirma(self, request):
-
         escala = request.data
-
-        print (escala['id'])
         escalaColaborador = EscalaColaborador.objects.filter(id=int(escala['id'])).get()
         escalaColaborador.status = 1;
         escalaColaborador.dataConfirmacao = datetime.datetime.now();
         escalaColaborador.save()
-
         return Response({'Ok:'})
 
 
     @action(methods=['post'], detail=False)
     def registrasolicitacao(self, request):
         escala = request.data
-
-
-
         escalaColaborador = EscalaColaborador.objects.filter(id=int(escala['id'])).get()
         dias = escalaColaborador.colaborador.empresa.diasAntecedenciaSolicitacao
         datalimite = escalaColaborador.dataInicio + datetime.timedelta(days=-dias)

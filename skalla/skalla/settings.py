@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'admin_auto_filters',
     'web',
     'api',
     'core',
@@ -203,10 +204,16 @@ SUIT_CONFIG = {
             'label': 'Minhas Escalas',
             'icon':'icon-question-sign',
             'url': '/minhaescala/'
-        },        {
+        },
+        {
             'label': 'Solicitações',
             'icon':'icon-question-sign',
             'url': '/solicitacoes/'
+        },
+{
+            'label': 'Escalas',
+            'icon':'icon-question-sign',
+            'url': '/escalas/'
         },
         {
             'label':'Empresa' ,

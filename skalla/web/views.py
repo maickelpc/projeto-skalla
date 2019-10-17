@@ -21,3 +21,7 @@ def gestaoEscala(request):
 @login_required(login_url='/admin/login')
 def solicitacoes(request):
     return render(request, 'solicitacoes.html',{})
+
+@login_required(login_url='/admin/login')
+def escalas(request):
+    return render(request, 'escalas.html',{})

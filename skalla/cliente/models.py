@@ -125,7 +125,7 @@ class Escala(models.Model):
     dataFim = models.DateTimeField()
     dataDuplicacao = models.DateTimeField()
     dataCancelamento = models.DateTimeField(null=True, blank=True)
-    status = models.PositiveSmallIntegerField(choices=STATUS, default=0)
+    status = models.PositiveSmallIntegerField(choices=STATUS, default=0) # 0 - Ativa / 1 Cancelada
 
     def __str__(self):
         return self.perfil.descricao + ' / ' + self.dataInicio.strftime("%d %m %Y %H:%M")
