@@ -12,15 +12,8 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}
-
-    <!-- Load required Bootstrap and BootstrapVue CSS -->
-<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-<link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
-<!-- Load polyfills to support older browsers -->
-<script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
 <!-- Load Vue followed by BootstrapVue -->
 <script src="https://vuejs.org/js/vue.js"></script>
-<script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
 <script src="https://momentjs.com/downloads/moment-with-locales.min.js"></script>
 
@@ -31,32 +24,32 @@
             {% csrf_token %}
             <ul style="list-style: none; float: left">
                 <li style="float:left; padding: 5px">
-                    <label for="dataInicio">Data de Início da Escala</label>
-                    <input class="form-control" type="date" id="dataInicio" v-model="dataInicio" />
-                </li>
-                <li style="float:left; padding: 5px">
-                    <label for="cliente">Cliente:</label><br/>
-                    <select v-model="cliente" id="cliente"  class="form-control">
-                        <optgroup label="Selecione um Cliente"></optgroup>
-                        <option v-for="c in clientes" v-bind:value="c">[[c.nomeFantasia]]</option>
-                    </select>
-                </li>
-                <li style="float:left; padding: 5px">
-                    <label for="perfil">Perfil:</label><br/>
+                    <label for="perfil">Perfil:</label>
                     <select v-model="perfil" id="perfil" class="form-control">
                         <optgroup label="Selecione um Perfil"></optgroup>
                         <option v-for="p in perfis" v-bind:value="p">[[p.descricao]]</option>
                     </select>
                 </li>
                 <li style="float:left; padding: 5px">
-                    <label for="ponto" v-if="cliente.id">Ponto de Alocação:</label><br/>
+                    <label for="dataInicio">Data de Início da Escala</label>
+                    <input class="form-control" type="date" style="width:150px;" id="dataInicio" v-model="dataInicio" />
+                </li>
+                <li style="float:left; padding: 5px">
+                    <label for="cliente">Cliente:</label>
+                    <select v-model="cliente" id="cliente"  class="form-control">
+                        <optgroup label="Selecione um Cliente"></optgroup>
+                        <option v-for="c in clientes" v-bind:value="c">[[c.nomeFantasia]]</option>
+                    </select>
+                </li>
+                <li style="float:left; padding: 5px">
+                    <label for="ponto" v-if="cliente.id">Ponto de Alocação:</label>
                     <select v-model="ponto" v-if="cliente.id" id="ponto" class="form-control">
                         <optgroup label="Selecione um Ponto de Alocação"></optgroup>
                         <option v-for="p in pontos" v-bind:value="p">[[p.nome]] - [[p.descricao]]</option>
                     </select>
                 </li>
                 <li style="float:left; padding: 5px">
-                    <label for="turno" v-if="ponto.id">Turnos do Ponto:</label><br/>
+                    <label for="turno" v-if="ponto.id">Turnos do Ponto:</label>
                     <select v-model="turno" v-if="ponto.id" id="ponto" class="form-control">
                         <optgroup label="Selecione um Turno"></optgroup>
                         <option v-for="t in turnos" v-bind:value="t">[[t.turno.descricao]]</option>
@@ -69,7 +62,7 @@
       <table class="table table-bordered" id="calendar">
           <thead>
             <tr>
-              <th scope="col" v-for="d in perfil.dias">
+              <th scope="col" v-if="dataInicio && perfil.id" v-for="d in perfil.dias">
                   [[ dataInicio, (d - 1) | moment ]]
               </th>
             </tr>
@@ -78,16 +71,16 @@
             <tr v-if="perfil.id && cliente.id && turno.id" style="font-size: 11px" >
               <td v-for="p in perfil.dias">
                   <table class="table table-bordered">
-                      <tr>
+                      <tr v-for="i in getIntervaloHoras(turno.turno.horaInicio, turno.turno.horaFim)">
                           <td>
-                              <button type="button" class="btn btn-primary btn-sm btn-outline">
-                                  [[ turno.turno.horaInicio ]] [[ turno.turno.horaFim ]]
-
-                              </button>
-                              <br/>
-                              <p v-for="c in colaboradoresDisponiveis" >
-                                      [[ c.first_name ]] [[ c.last_name ]]
+                              <p >
+                                  [[ turno.turno.horaInicio, (i - 1) | horas ]]
                               </p>
+                              <br/>
+                                <a style="cursor: pointer;" v-on:click="abreModalColaboradores(
+                                                dataInicio, p, turno.turno.horaInicio, turno.turno.horaFim)"
+                                                data-toggle="modal" data-target="#modalColaboradores">Adicionar Colaboradores</a>
+
                           </td>
                       </tr>
                   </table>
@@ -96,22 +89,37 @@
 
           </tbody>
         </table>
+
+  <div class="modal fade" id="modalColaboradores" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Título do modal</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" v-if="escalaColaborador.dataInicio && escalaColaborador.dataFim">
+            Adicionar Colaborador em [[ escalaColaborador.dataInicio ]] - [[ escalaColaborador.dataFim ]]. <br/>
+            <p v-for="c in colaboradoresDisponiveis" >
+                [[ c.first_name ]] [[ c.last_name ]]
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            <button type="button" class="btn btn-primary">Salvar mudanças</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-
-{#    <b-container class="bv-example-row" id="calendar">#}
-{#        <b-row>#}
-{#            <b-col v-for="c in colaboradores">#}
-{#                [[ c.first_name ]],#}
-{#            </b-col>#}
-{#        </b-row>#}
-{#    </b-container>#}
 
 <script type="application/javascript">
 
         var app = new Vue({
             el : '#content-main',
             data: {
+                dataInicio: null,
                 colaboradoresDisponiveis: [],
                 colaboradoresEscalados: [],
                 loading: false,
@@ -125,8 +133,45 @@
                 cliente: {},
                 turnos: [],
                 turno: {},
-                dataInicio: '',
-                escala : []
+                escalaColaborador: {
+                    dataInicio: null,
+                    dataFim: null,
+                    colaborador: null
+                },
+                escala : {
+                    "dataInicio": null,
+                    "dataFim": null,
+                    "dataDuplicacao": null,
+                    "dataCancelamento": null,
+                    "status": null,
+                    "perfil": {
+                        "descricao": "",
+                        "tipo": "",
+                        "dias": null,
+                        "duplicar": false,
+                        "horasAntecedenciaDuplicacao": null
+                    },
+                    "turnoPonto": {
+                        "turno": {
+                            "descricao": "",
+                            "periodo": "",
+                            "horasTrabalhadas": null,
+                            "horasDescanso": null,
+                            "horaInicio": null,
+                            "horaFim": null,
+                            "ativo": false
+                        },
+                        "pontoAlocacao": {
+                            "cliente": {
+                                "nomeFantasia": ""
+                            },
+                            "nome": "",
+                            "descricao": "",
+                            "endereco": null
+                        },
+                        "qtdeColaboradores": null
+                    }
+                }
             },
             delimiters: ["[[", "]]"],
             mounted: function () {
@@ -137,19 +182,57 @@
             watch: {
                 cliente: function(val) {
                     this.getPontosAlocacao(val.id);
+                    this.escala.turnoPonto.pontoAlocacao.cliente = val;
                 },
                 ponto: function(val) {
                     this.getTurnosPonto(val.id);
+                    this.escala.turnoPonto.pontoAlocacao = val;
+                },
+                perfil: function(val) {
+                    this.escala.perfil = val;
+                    if (this.escala.dataInicio) {
+                        moment.locale('pt-BR');
+                        this.escala.dataFim = moment(this.escala.dataInicio);
+                        this.escala.dataFim.add((this.escala.perfil.dias - 1), 'd');
+                        console.log(this.escala);
+                    }
+                },
+                dataInicio: function(val) {
+                    moment.locale('pt-BR');
+                    this.escala.dataInicio = moment(val, 'YYYY-MM-DD');
+                    this.escala.dataFim = moment(val, 'YYYY-MM-DD');
+                    this.escala.dataFim.add((this.escala.perfil.dias - 1), 'd');
+                    console.log(this.escala);
                 }
             },
             filters: {
               moment: function (date, d) {
                   moment.locale('pt-BR');
-                  console.log(date);
-                return moment(date).add(d, 'days').format('dddd, DD/MM/YYYY');
+                  //console.log(date);
+                  return moment(date).add(d, 'days').format('dddd, DD/MM/YYYY');
+              },
+              horas: function (date, d) {
+                  moment.locale('pt-BR');
+                  horas = date.split(':');
+                  return moment({hour: horas[0], minute: horas[1]}).add(d, 'h').format('HH:mm')
+                            + ' - '
+                            + moment({hour: horas[0], minute: horas[1]}).add(d + 1, 'h').format('HH:mm');
               }
             },
             methods: {
+                abreModalColaboradores(dataInicial, dia, horaInicio, horaFim) {
+                    console.log(dataInicial + " " + dia  + " " + horaInicio  + " " + horaFim);
+                    let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('DD/MM/YYYY');
+                    this.escalaColaborador.dataInicio = dataEscala + " " + horaInicio;
+                    this.escalaColaborador.dataFim = dataEscala + " " + horaFim;
+                    console.log(this.escalaColaborador);
+                },
+                getIntervaloHoras: function(horaInicio, horaFim) {
+                    let inicio = moment(horaInicio, "HH:mm");
+                    let fim = moment(horaFim, "HH:mm");
+
+                    return fim.diff(inicio, 'hours');
+                },
                 getColaboradores: function() {
                   this.loading = true;
                   this.$http.get('/api/colaborador/')
