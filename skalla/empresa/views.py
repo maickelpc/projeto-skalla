@@ -26,7 +26,7 @@ class ColaboradorViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         data = self.request.query_params.get('data', None)
 
-        queryset = EscalaColaborador.objects.order_by('dataInicio').all()
+        queryset = Colaborador.objects.order_by('first_name').all()
         if data:
             print(data)
             data = datetime.datetime.strptime(data, '%Y-%m-%d')
