@@ -113,6 +113,7 @@ var app = new Vue({
       mensagemErro:'',
       mensagemSucesso: '',
       escalas: [],
+      dias:[],
       total: 0,
       carregando: false,
       filtroId: null,
@@ -123,6 +124,8 @@ var app = new Vue({
       filtroDataInicial: moment().format("YYYY-MM-DD"),
       filtroDataFinal: moment().add(7, 'd').format("YYYY-MM-DD"),
       paginacao: {page: 1},
+      diaSemana: ['Domingo','Segunda-feira', 'Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'],
+      mesAno: ['','Janeiro','Fevereiro', 'Março','Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro','Dezembro']
   },
    created: function() {
     this.buscar();
@@ -168,13 +171,30 @@ var app = new Vue({
             x.dataFim = moment(x.dataFim);
             x.horas = moment.duration(x.dataFim.diff(x.dataInicio)).asHours();
             x.executada = x.dataInicio.diff(agora) < 0;
+            x.escalaColaborador = x.escalaColaborador.map(y => {
+                y.dataInicio = moment(y.dataInicio);
+                y.dataFim = moment(y.dataFim);
+                return y;
+                });
             return x;
           });
+
+          this.dias = [];
+          let inicio = moment(this.filtroDataInicial);
+          let final = moment(this.filtroDataFinal);
+          let dias = final.diff(inicio, 'days');
+
+          for(let i = 0; i < dias; i++){
+            this.dias.push( moment(this.filtroDataInicial).add(i,'days') );
+          }
+
         }).catch( erro => {
             console.log(erro);
         }).finally(() => {
             this.carregando = false;
         });
+
+
     },
 
     gerarPaginacao: function(total, pagina){
@@ -190,35 +210,13 @@ var app = new Vue({
         return p;
     },
 
-//    enviarRetornoSolicitacao: function() {
-//        this.carregando = true;
-//
-//        this.escalaConfirma.statusSolicitacao = this.aceitarSolicitacao ? 2 : 3;
-//        let aceita = this.aceitarSolicitacao ? "Aceita" : "Recusada";
-//        this.escalaConfirma.retornoSolicitacao = this.retornoSolicitacao;
-//        this.escalaConfirma.dataRetornoSolicitacaoAlteracao = moment().format();
-//
-//        let headers = {
-//            'Content-Type': 'application/json',
-//            "X-CSRFToken": token
-//          };
-//
-//        this.$http.post(`/api/escala-colaborador/retornosolicitacao/`, this.escalaConfirma, {headers})
-//        .then( response =>  {
-//          this.mensagemSucesso = `Solicitação ${this.escalaConfirma.id} ${aceita} com sucesso`;
-//
-//        }).catch( erro => {
-//            this.mensagemErro = `Erro ao registrar retorno da solicitação ${this.escalaConfirma.id}`;
-//            this.escalaConfirma.statusSolicitacao = 1;
-//
-//            delete this.escalaConfirma.retornoSolicitacao;
-//            delete this.escalaConfirma.dataRetornoSolicitacaoAlteracao;
-//            console.log(erro);
-//        })
-//        .finally(() => {
-//            this.carregando = false;
-//        });
-//    },
+    escalasDia: function(dia){
+        return this.escalas.filter( x => x.escalaColaborador.filter(y => y.dataInicio.format('YYYYMMDD') === dia.format('YYYYMMDD')).length > 0 );
+    },
+
+    colaboradoresDia: function(escala, dia){
+        return escala.escalaColaborador.filter(y => y.dataInicio.format('YYYYMMDD') === dia.format('YYYYMMDD'));
+    },
 
     limpaErros: function(){
         this.mensagemErro = '';
