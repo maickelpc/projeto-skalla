@@ -202,17 +202,17 @@ SUIT_CONFIG = {
         'sites',
         {
             'label': 'Minhas Escalas',
-            'icon':'icon-question-sign',
+            'icon':'icon-list',
             'url': '/minhaescala/'
         },
         {
             'label': 'Solicitações',
-            'icon':'icon-question-sign',
+            'icon':'icon-envelope',
             'url': '/solicitacoes/'
         },
 {
             'label': 'Escalas',
-            'icon':'icon-question-sign',
+            'icon':'icon-calendar',
             'url': '/escalas/'
         },
         {

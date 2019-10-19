@@ -113,6 +113,8 @@ var app = new Vue({
       mensagemErro:'',
       mensagemSucesso: '',
       escalas: [],
+      escalaModal: {},
+      colaboradorModal: {},
       dias:[],
       total: 0,
       carregando: false,
@@ -120,10 +122,11 @@ var app = new Vue({
       filtroColaboradorId: null,
       filtroPontoAlocacaoId: null,
       filtroClienteId: null,
-      filtroStatus: -1,
+      filtroStatus: 0,
       filtroDataInicial: moment().format("YYYY-MM-DD"),
       filtroDataFinal: moment().add(7, 'd').format("YYYY-MM-DD"),
       paginacao: {page: 1},
+      mostrarColaboradores: false,
       diaSemana: ['Domingo','Segunda-feira', 'Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'],
       mesAno: ['','Janeiro','Fevereiro', 'Março','Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro','Dezembro']
   },
@@ -170,7 +173,9 @@ var app = new Vue({
             x.dataInicio = moment(x.dataInicio);
             x.dataFim = moment(x.dataFim);
             x.horas = moment.duration(x.dataFim.diff(x.dataInicio)).asHours();
-            x.executada = x.dataInicio.diff(agora) < 0;
+            x.executada = x.dataFim.diff(agora) < 0 && x.status == 0;
+            x.executando = x.dataInicio.diff(agora) < 0 && !x.executada && x.status == 0;
+            x.programada = !x.executada && !x.executando && x.status == 0;
             x.escalaColaborador = x.escalaColaborador.map(y => {
                 y.dataInicio = moment(y.dataInicio);
                 y.dataFim = moment(y.dataFim);
@@ -194,6 +199,86 @@ var app = new Vue({
             this.carregando = false;
         });
 
+
+    },
+
+    toogleMostrarColaboradores: function(){
+        this.mostrarColaboradores = !this.mostrarColaboradores;
+    },
+
+    abreModalCancelarEscala: function(escala){
+        this.mostrarColaboradores = false;
+        this.mensagemSucesso = '';
+        this.mensagemErro = '';
+        this.escalaModal = escala;
+
+    },
+
+    cancelarEscala: function(escala){
+        this.mensagemSucesso = '';
+        this.mensagemErro = '';
+        this.escalaModal = escala;
+        this.carregando = true;
+        this.$http.get(`/api/escala/${escala.id}/cancelarescala/`)
+        .then(dados => {
+            console.log(dados);
+            let escalaRetorno = dados.body;
+            this.escalaModal.status = escalaRetorno.status;
+            this.escalaModal.dataCancelamento = moment(escalaRetorno.dataCancelamento);
+            this.escalaModal.executada = false;
+            this.escalaModal.executando = false;
+            this.escalaModal.programada = false;
+
+            this.mensagemSucesso = `Escala ${this.escalaModal.id} foi cancelada com sucesso!`;
+
+
+        }).catch(erros => {
+            console.log(erros);
+            this.mensagemErro = erros.bodyText;
+
+        })
+        .finally(()=>{
+            this.carregando = false;
+        });
+    },
+
+    removerColaborador: function(escalaColaborador){
+        this.mensagemSucesso = '';
+        this.mensagemErro = '';
+        this.colaboradorModal = escalaColaborador;
+        this.carregando = true;
+        this.$http.get(`/api/escala-colaborador/${escalaColaborador.id}/cancelar/`)
+        .then(dados => {
+            console.log(dados);
+            let retorno = dados.body;
+            this.colaboradorModal.status = 3;
+            this.colaboradorModal.dataCancelamento = moment(retorno.dataCancelamento)
+
+            this.mensagemSucesso = `Escala ${this.escalaModal.id} foi cancelada com sucesso!`;
+
+
+        }).catch(erros => {
+            console.log(erros);
+            this.mensagemErro = erros.bodyText;
+
+        })
+        .finally(()=>{
+            this.carregando = false;
+        });
+    },
+
+    abreModalRemoveColaborador: function(escala, colaborador){
+        this.mensagemSucesso = '';
+        this.mensagemErro = '';
+        this.mostrarColaboradores = false;
+        this.colaboradorModal = colaborador;
+        if(this.colaboradorModal.dataSolicitacaoAlteracao){
+            this.colaboradorModal.dataSolicitacaoAlteracao = moment(this.colaboradorModal.dataSolicitacaoAlteracao);
+        }
+        if(this.colaboradorModal.dataRetornoSolicitacaoAlteracao){
+            this.colaboradorModal.dataRetornoSolicitacaoAlteracao = moment(this.colaboradorModal.dataRetornoSolicitacaoAlteracao);
+        }
+        this.escalaModal = escala;
 
     },
 

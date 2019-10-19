@@ -92,7 +92,7 @@
                                 <h4  class="card-title">
                                     <span v-if="escala.executada && escala.status !== 2" class="badge badge-success">Executada</span>
                                     <span v-if="! escala.executada && escala.status === 0" class="badge badge-success">Programada</span>
-                                    <span v-if="escala.status === 2"  class="badge badge-danger">Cancelado</span>
+                                    <span v-if="escala.status === 3"  class="badge badge-danger">Cancelado</span>
                                     <span v-if="! escala.executada && escala.status === 1" class="badge badge-info">Confirmada</span>
                                      [[escala.dataInicio | datahora]]h - [[escala.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]] / [[escala.escala.turnoPonto.pontoAlocacao.nome]]</h4>
 

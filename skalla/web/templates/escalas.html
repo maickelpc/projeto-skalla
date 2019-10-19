@@ -4,8 +4,8 @@
 {% block extrastyle %}
 
 
-  {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static 'web/styles/loader.css' %}" media="all">
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'web/styles/loader.css' %}" media="all">
 {% endblock %}
 
 
@@ -16,166 +16,314 @@
 {% block breadcrumbs %}{% endblock %}
 {% block content %}
 <style>
-    .negrito{
-        font-weight: bold;
-    }
+  .negrito{
+    font-weight: bold;
+  }
 
-    .escala-ativa{
-        background-color:green !important;
-    }
+  .escala-ativa{
+    background-color:green !important;
+  }
 
-    .escala-inativa{
-        background-color:gray !important;
-    }
+  .escala-inativa{
+    background-color:gray !important;
+  }
 
-    .escala-cancelada{
-        background-color:red !important;
-    }
+  .escala-cancelada{
+    background-color:red !important;
+  }
 </style>
 
 
-    <div id="buscaescala">
+<div id="buscaescala">
 
-        <div class="tela-inteira" v-if="carregando">
-             <div class="lds-hourglass"> </div>
-        </div>
-
-
-        <div class="alert alert-success" v-if="mensagemSucesso.length > 1">
-            <button class="close" data-dismiss="alert">x</button>
-            [[mensagemSucesso]]
-        </div>
-        <div class="alert alert-danger" v-if="mensagemErro.length > 1">
-            <button class="close" data-dismiss="alert">x</button>
-            [[mensagemErro]]
-        </div>
-        <div class="toolbar-content clearfix">
-            <div class="clearfix">
-                <h3>Filtro</h3>
-                <div style="max-width: 100%">
-
-                    <table>
-                        <tr><td>Código Escala</td><td><input type="text" v-model="filtroId" placeholder="Código da escala"></td></tr>
-<!--                        <tr><td>Colaborador</td><td><select name="colaborador" v-model="filtroColaboradorId" id="id_colaborador" data-placeholder="Selecione um colaborador"></select></td></tr>-->
-                        <tr><td>Cliente</td><td><select name="cliente" v-model="filtroClienteId" id="id_cliente" data-placeholder="Selecione um Cliente"></select></td></tr>
-                        <tr><td>Ponto Alocação</td><td><select id="id_pontoalocacao" name="pontoAlocacao" v-model="filtroPontoAlocacaoId" data-placeholder="Selecione um Ponto de Alocação"></select></td></tr>
-                        <tr><td>Data Inicial</td><td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td></tr>
-                        <tr><td>Data Final</td><td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td></tr>
-                        <tr><td>Status</td><td>
-                            <select v-model="filtroStatus">
-                                <option value="-1" selected>Todos</option>
-                                <option value="0">Ativa</option>
-                                <option value="1">Cancelada</option>
-                            </select>
-                        </td></tr>
-                        <tr><td>Buscar</td><td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td></tr>
-                    </table>
-
-                </div>
-            </div>
-        </div>
-    <hr>
-        <div id="content" class="flex row-fluid">
-            <div id="content-main">
-                <div class="inner-center-column" style="width: 125%">
-                    <h1>Escalas de trabalho</h1>
-
-                    <div v-for="dia in dias">
-                        <div style="margin-top: 10px" >
-                            <div style="border: 1px solid; padding:15px; width: 100%" class="card" >
-                            <h4  class="card-title"> [[diaSemana[dia.format('d')] ]], [[dia.format('DD')]] de [[mesAno[dia.format('M')] ]] de 2019 </h4>
-                              <div v-if="escalasDia(dia).length == 0" class="alert alert-secondary">
-                                  <h5>Não possui nehuma escala para este dia</h5>
-                              </div>
-                                <div class="card-body" v-for="escala in escalasDia(dia)">
-                                  <div>
-                                      <span class="badge badge-success">Cliente: [[escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]]</span>
-                                      <span class="badge badge-success">Ponto: [[escala.turnoPonto.pontoAlocacao.nome]]</span>
-                                      <span class="badge badge-secondary">Mínimo: [[escala.turnoPonto.qtdeColaboradores]]</span>
-                                      <span class="badge badge-secondary">Período: [[escala.dataInicio.format('DD/MM/YYYY HH:mm')]] até [[escala.dataFim.format('DD/MM/YYYY HH:mm')]]</span>
-                                      <span class="badge badge-secondary">Turno: [[escala.turnoPonto.turno.periodo]]</span>
-
-                                  </div>
-                                  <table class="table">
-                                      <tr>
-                                          <td class=""></td>
-                                          <td class="">0:00h</td>
-                                          <td class="">2:00h</td>
-                                          <td class="">4:00h</td>
-                                          <td class="">6:00h</td>
-                                          <td class="">8:00h</td>
-                                          <td class="">10:00h</td>
-                                          <td class="">12:00h</td>
-                                          <td class="">14:00h</td>
-                                          <td class="">16:00h</td>
-                                          <td class="">18:00h</td>
-                                          <td class="">20:00h</td>
-                                          <td class="">22:00h</td>
-                                      </tr>
-                                      <tr v-for="colaborador in colaboradoresDia(escala, dia)">
-                                          <td class="">[[colaborador.id]] - [[colaborador.colaborador.first_name]] / [[ colaborador.colaborador.departamento.nome ]]</td>
-                                          <td v-bind:class=" [(0 >= colaborador.dataInicio.format('HH') && 2 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(2 >= colaborador.dataInicio.format('HH') && 4 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(4 >= colaborador.dataInicio.format('HH') && 6 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(6 >= colaborador.dataInicio.format('HH') && 8 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(8 >= colaborador.dataInicio.format('HH') && 10 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(10 >= colaborador.dataInicio.format('HH') && 12 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(12 >= colaborador.dataInicio.format('HH') && 14 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(14 >= colaborador.dataInicio.format('HH') && 16 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(16 >= colaborador.dataInicio.format('HH') && 18 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(18 >= colaborador.dataInicio.format('HH') && 20 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(20 >= colaborador.dataInicio.format('HH') && 22 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-                                          <td v-bind:class=" [(22 >= colaborador.dataInicio.format('HH') && 23 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa'] "></td>
-
-                                      </tr>
-
-                                  </table>
-
-                                  <div style="text-align: right">
-<!--                                      <button v-if="! escala.executada && escala.status === 0 " v-on:click="abreModal(escala)" data-toggle="modal" data-target="#modalConfirmaParticipacao" class="btn btn-primary">Confirmar</button>-->
-<!--&lt;!&ndash;                                      <button v-if="! escala.executada && escala.status === 0 " v-on:click="abreModal(escala)" data-toggle="modal" data-target="#" class="btn btn-danger">Recusar</button>&ndash;&gt;-->
-<!--                                      <button v-if="! escala.statusSolicitacao  && ! escala.executada && escala.status === 1 " v-on:click="abreModal(escala)" data-toggle="modal" data-target="#modalSolicitacao" class="btn btn-warning">Solicitar Alteração</button>-->
-                                  </div>
-
-                              </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    Legenda:  <span class="badge escala-ativa">Trabalho</span>
-                        <span class="badge escala-inativa">Descanso</span>
-                        <span class="badge escala-cancelada">Cancelado</span>
+  <div class="tela-inteira" v-if="carregando">
+    <div class="lds-hourglass"> </div>
+  </div>
 
 
-<!--                    [[escalas]]-->
-<br>
-                    [[ escalas.length ]]
+  <div class="alert alert-success" v-if="mensagemSucesso.length > 1">
+    <button class="close" data-dismiss="alert">x</button>
+    [[mensagemSucesso]]
+  </div>
+  <div class="alert alert-danger" v-if="mensagemErro.length > 1">
+    <button class="close" data-dismiss="alert">x</button>
+    [[mensagemErro]]
+  </div>
+  <div class="toolbar-content clearfix">
+    <div class="clearfix">
+      <h3>Filtro</h3>
+      <div style="max-width: 100%">
 
+        <table>
+          <tr><td>Código Escala</td><td><input type="text" v-model="filtroId" placeholder="Código da escala"></td></tr>
+          <!--                        <tr><td>Colaborador</td><td><select name="colaborador" v-model="filtroColaboradorId" id="id_colaborador" data-placeholder="Selecione um colaborador"></select></td></tr>-->
+          <tr><td>Cliente</td><td><select name="cliente" v-model="filtroClienteId" id="id_cliente" data-placeholder="Selecione um Cliente"></select></td></tr>
+          <tr><td>Ponto Alocação</td><td><select id="id_pontoalocacao" name="pontoAlocacao" v-model="filtroPontoAlocacaoId" data-placeholder="Selecione um Ponto de Alocação"></select></td></tr>
+          <tr><td>Data Inicial</td><td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td></tr>
+          <tr><td>Data Final</td><td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td></tr>
+          <tr><td>Status</td><td>
+            <select v-model="filtroStatus">
+              <option value="-1" selected>Todos</option>
+              <option value="0">Ativa</option>
+              <option value="1">Cancelada</option>
+            </select>
+          </td></tr>
+          <tr><td>Buscar</td><td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div id="content" class="flex row-fluid">
+    <div id="content-main">
+      <div class="inner-center-column" style="width: 125%">
+        <h1>Escalas de trabalho</h1>
+
+        <div v-for="dia in dias">
+          <div style="margin-top: 10px;" >
+            <div style="border: 1px solid; padding:15px; width: 100%" class="card" >
+              <h4  class="card-title"> [[diaSemana[dia.format('d')] ]], [[dia.format('DD')]] de [[mesAno[dia.format('M')] ]] de 2019 </h4>
+              <div v-if="escalasDia(dia).length == 0" class="alert alert-secondary">
+                <h5>Não possui nehuma escala para este dia</h5>
+              </div>
+
+              <div class="card-body" v-for="escala in escalasDia(dia)" >
+                <table class="table">
+                  <tr>
+                    <td>
+                        <button v-if="escala.programada" class="btn btn-danger" v-on:click="abreModalCancelarEscala(escala)" data-toggle="modal" data-target="#modalCancelarEscala" > <i class="icon-remove" style="color:white"></i> Cancelar Escala</button>
+
+                    </td>
+                    <td>  Executada: [[escala.executada]] | Executando: [[escala.executando]] <br>
+                      Programada: [[escala.programada]] | Status: [[escala.status]]
+                    </td>
+                    <td class="text-right">
+                      <span v-if="escala.executada" class="badge badge-success" style="border-radius: 50px; background-color: royalblue; padding:10px">Escala executada</span>
+                      <span v-else-if="escala.executando" class="badge badge-primary" style="border-radius: 50px; background-color: royalblue; padding:10px">Escala em andamento</span>
+                      <span v-else-if="escala.status == 1" class="badge badge-primary" style="border-radius: 50px; background-color: orangered; padding:10px">Escala Cancelada</span>
+                      <span v-else class="badge badge-success" style="border-radius: 50px; padding:10px">Escala Programada</span>
+                    </td>
+                  </tr>
+                </table>
+                <div>
+                  <span class="badge badge-success">Cliente: [[escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]]</span>
+                  <span class="badge badge-success">Ponto: [[escala.turnoPonto.pontoAlocacao.nome]]</span>
+                  <span class="badge badge-secondary">Mínimo: [[escala.turnoPonto.qtdeColaboradores]]</span>
+                  <span class="badge badge-secondary">Período: [[escala.dataInicio.format('DD/MM/YYYY HH:mm')]] até [[escala.dataFim.format('DD/MM/YYYY HH:mm')]]</span>
+                  <span class="badge badge-secondary">Turno: [[escala.turnoPonto.turno.periodo]]</span>
 
                 </div>
+                <table class="table">
+                  <tr>
+                    <td class=""></td>
+                    <td class="">0:00h</td>
+                    <td class="">2:00h</td>
+                    <td class="">4:00h</td>
+                    <td class="">6:00h</td>
+                    <td class="">8:00h</td>
+                    <td class="">10:00h</td>
+                    <td class="">12:00h</td>
+                    <td class="">14:00h</td>
+                    <td class="">16:00h</td>
+                    <td class="">18:00h</td>
+                    <td class="">20:00h</td>
+                    <td class="">22:00h</td>
+                    <td class=""></td>
+                  </tr>
+                  <tr v-for="colaborador in colaboradoresDia(escala, dia)">
+                    <td class="">[[colaborador.id]] - [[colaborador.colaborador.first_name]] / [[ colaborador.colaborador.departamento.nome ]] [[colaborador.status]]</td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada': (0 >= colaborador.dataInicio.format('HH') && 2 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(2 >= colaborador.dataInicio.format('HH') && 4 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(4 >= colaborador.dataInicio.format('HH') && 6 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(6 >= colaborador.dataInicio.format('HH') && 8 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(8 >= colaborador.dataInicio.format('HH') && 10 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(10 >= colaborador.dataInicio.format('HH') && 12 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(12 >= colaborador.dataInicio.format('HH') && 14 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(14 >= colaborador.dataInicio.format('HH') && 16 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(16 >= colaborador.dataInicio.format('HH') && 18 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(18 >= colaborador.dataInicio.format('HH') && 20 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(20 >= colaborador.dataInicio.format('HH') && 22 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(22 >= colaborador.dataInicio.format('HH') && 23 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td><button title="Remover colaborador"  v-if="escala.programada && colaborador.status != 3" class="btn btn-danger" v-on:click="abreModalRemoveColaborador(escala, colaborador)" data-toggle="modal" data-target="#modalRemoveColaborador" > <i class="icon-remove" style="color:white"></i></button> </td>
+
+                  </tr>
+
+                </table>
+
+
+              </div>
             </div>
+          </div>
+
         </div>
+        <br>
+        Legenda:  <span class="badge escala-ativa">Trabalho</span>
+        <span class="badge escala-inativa">Descanso</span>
+        <span class="badge escala-cancelada">Cancelado</span>
 
-        <div class="pagination-block">
-            <div class="pagination">
 
-               <ul class="pagination">
+      </div>
+    </div>
+  </div>
 
-                  <li v-bind:class="{ active: pagina == paginacao.page }" v-for="pagina in paginacao.paginas" v-on:click="buscar(pagina)" ><a href="javascript:void(0)"> [[pagina]] </a></li>
+  <div class="pagination-block">
+    <div class="pagination">
 
-                </ul>
+      <ul class="pagination">
+
+        <li v-bind:class="{ active: pagina == paginacao.page }" v-for="pagina in paginacao.paginas" v-on:click="buscar(pagina)" ><a href="javascript:void(0)"> [[pagina]] </a></li>
+
+      </ul>
+    </div>
+  </div>
+
+<!--    Modal  Cancela  Escala -->
+<div class="modal fade" id="modalCancelarEscala" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Cancelar Escala</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" v-if="escalaModal.id">
+          <h2>Tem certeza que deseja cancelar a escala?</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Ponto de Alocação</th>
+                        <th>Período</th>
+                        <th>Colaboradores</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>[[escalaModal.turnoPonto.pontoAlocacao.cliente.nomeFantasia]] </td>
+                        <td>[[escalaModal.turnoPonto.pontoAlocacao.nome]] </td>
+                        <td>de [[escalaModal.dataInicio.format('DD/MM/YYYY HH:mm' ) ]]<br> até [[escalaModal.dataFim.format('DD/MM/YYYY HH:mm' ) ]]</td>
+                        <td>
+                            [[escalaModal.escalaColaborador.length]]<br> <a v-on:click="toogleMostrarColaboradores()" href="javascript:void(0)">ver</a><br>
+                            <ul v-if="mostrarColaboradores">
+                                <li v-for="colaborador in escalaModal.escalaColaborador" > [[ colaborador.colaborador.first_name ]] </li>
+                            </ul>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+
+          </div>
+
+      <div class="modal-footer">
+           <div style="white-space: pre;" class="alert alert-success" v-if="mensagemSucesso.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemSucesso]]
             </div>
-        </div>
+            <div style="white-space: pre;" class="alert alert-danger" v-if="mensagemErro.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemErro]]
+            </div>
+
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+          <button type="button" v-if="escalaModal.status !== 1" class="btn btn-primary" v-on:click="cancelarEscala(escalaModal)">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--    Modal  Cancela Escala -->
+
+
+<!--    Modal  Remove Colaborador -->
+<div class="modal fade" id="modalRemoveColaborador" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModsalLabel">Remover Colaborador da escala</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" v-if="escalaModal.id && colaboradorModal.id">
+           <h2>Tem certeza que deseja remover o colaborador [[colaboradorModal.colaborador.first_name]] da escala?</h2>
+          <br>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Ponto de Alocação</th>
+                        <th>Período</th>
+                        <th>Colaboradores</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>[[escalaModal.turnoPonto.pontoAlocacao.cliente.nomeFantasia]] </td>
+                        <td>[[escalaModal.turnoPonto.pontoAlocacao.nome]] </td>
+                        <td>de [[escalaModal.dataInicio.format('DD/MM/YYYY HH:mm' ) ]]<br> até [[escalaModal.dataFim.format('DD/MM/YYYY HH:mm' ) ]]</td>
+                        <td>
+                            [[escalaModal.escalaColaborador.length]]<br> <a v-on:click="toogleMostrarColaboradores()" href="javascript:void(0)">ver</a><br>
+                            <ul v-if="mostrarColaboradores">
+                                <li v-for="colaborador in escalaModal.escalaColaborador" > [[ colaborador.colaborador.first_name ]] </li>
+                            </ul>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+          <div v-if="colaboradorModal.dataSolicitacaoAlteracao">
+              <hr>
+              <h4>Solicitação de Alteração</h4>
+              <strong>Solicitação:</strong> [[colaboradorModal.solicitacaoAlteracao]]<br>
+              <strong>Data:</strong> [[colaboradorModal.dataSolicitacaoAlteracao.format('DD/MM/YYYY HH:mm') ]]
+          </div>
+
+          <div v-if="colaboradorModal.dataRetornoSolicitacaoAlteracao">
+
+              <hr>
+
+              <h4>Retorno ao colaborador</h4>
+              <strong>Retorno: </strong>[[colaboradorModal.retornoSolicitacao]]<br>
+              <strong>Solicitação: </strong>[[ colaboradorModal.statusSolicitacao == 0 ? 'Pendente' : ( colaboradorModal.statusSolicitacao == 1 ? 'Aceita' : 'Recusada') ]]<br>
+              <strong>Data: </strong>[[colaboradorModal.dataRetornoSolicitacaoAlteracao.format('DD/MM/YYYY HH:mm') ]]
+          </div>
+
+
+          </div>
+
+      <div class="modal-footer">
+           <div style="white-space: pre;" class="alert alert-success" v-if="mensagemSucesso.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemSucesso]]
+            </div>
+            <div style="white-space: pre;" class="alert alert-danger" v-if="mensagemErro.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemErro]]
+            </div>
+
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+          <button type="button" v-if="colaboradorModal.status !== 3" class="btn btn-primary" v-on:click="removerColaborador(colaboradorModal)">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--    Modal  Remove Colaborador -->
+
 
 
 </div>
 
 
 <script type="application/javascript">
-    var token = '{{csrf_token}}';
-    var userId = "{{request.user.id}}";
+  var token = '{{csrf_token}}';
+  var userId = "{{request.user.id}}";
 </script>
 <script type="application/javascript" src="{% static 'web/escalas.js' %}"></script>
 
 {% endblock %}
-

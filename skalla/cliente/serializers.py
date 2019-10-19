@@ -65,13 +65,17 @@ class EscalaSerializer(serializers.ModelSerializer):
         model = Escala
         fields = ('__all__')
 
+class EscalaSimplificado2Serializer(serializers.ModelSerializer):
+    turnoPonto = Turno_PontoAlocacaoSerializer()
+    perfil = PerfilJornadaSerializer
 
-
-
+    class Meta:
+        model = Escala
+        fields = ('__all__')
 
 
 class EscalaColaboradorSerializer(serializers.ModelSerializer):
-    escala = EscalaSerializer()
+    escala = EscalaSimplificado2Serializer()
     colaborador = ColaboradorSerializer()
 
     class Meta:
