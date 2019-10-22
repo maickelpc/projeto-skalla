@@ -31,6 +31,10 @@
   .escala-cancelada{
     background-color:red !important;
   }
+
+  .max-30{
+    max-width: 30px;
+  }
 </style>
 
 
@@ -91,60 +95,43 @@
               <div class="card-body" v-for="escala in escalasDia(dia)" >
                 <table class="table">
                   <tr>
-                    <td>
+                    <td >
+                        <button v-if="escala.programada" class="btn btn-primary" v-on:click="abreModalAdicionarColaborador(escala, dia)" data-toggle="modal" data-target="#modalAdicionarColaborador" > <i class="icon-plus" style="color:white"></i> Adicionar Colaborador</button>
+                    </td>
+                      <td colspan="4">
                         <button v-if="escala.programada" class="btn btn-danger" v-on:click="abreModalCancelarEscala(escala)" data-toggle="modal" data-target="#modalCancelarEscala" > <i class="icon-remove" style="color:white"></i> Cancelar Escala</button>
+                    </td>
+                    <td colspan="4">
+                        <h4>[[escala.turnoPonto.turno.descricao]] | [[escala.turnoPonto.turno.periodo]]</h4>
+                    </td>
+                    <td colspan="13">
+                        <div>
+                            <span class="badge badge-success">Cliente: [[escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]]</span>
+                            <span class="badge badge-success">Ponto: [[escala.turnoPonto.pontoAlocacao.nome]]</span>
+                            <span class="badge badge-secondary">Mínimo: [[escala.turnoPonto.qtdeColaboradores]]</span>
+                            <span class="badge badge-secondary">Período: [[escala.dataInicio.format('DD/MM/YYYY HH:mm')]] até [[escala.dataFim.format('DD/MM/YYYY HH:mm')]]</span>
+                            <span class="badge badge-secondary">Turno: [[escala.turnoPonto.turno.periodo]]</span>
+                        </div>
 
                     </td>
-                    <td>  Executada: [[escala.executada]] | Executando: [[escala.executando]] <br>
-                      Programada: [[escala.programada]] | Status: [[escala.status]]
-                    </td>
-                    <td class="text-right">
+                    <td class="text-right" colspan="3">
                       <span v-if="escala.executada" class="badge badge-success" style="border-radius: 50px; background-color: royalblue; padding:10px">Escala executada</span>
                       <span v-else-if="escala.executando" class="badge badge-primary" style="border-radius: 50px; background-color: royalblue; padding:10px">Escala em andamento</span>
                       <span v-else-if="escala.status == 1" class="badge badge-primary" style="border-radius: 50px; background-color: orangered; padding:10px">Escala Cancelada</span>
                       <span v-else class="badge badge-success" style="border-radius: 50px; padding:10px">Escala Programada</span>
                     </td>
                   </tr>
-                </table>
-                <div>
-                  <span class="badge badge-success">Cliente: [[escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]]</span>
-                  <span class="badge badge-success">Ponto: [[escala.turnoPonto.pontoAlocacao.nome]]</span>
-                  <span class="badge badge-secondary">Mínimo: [[escala.turnoPonto.qtdeColaboradores]]</span>
-                  <span class="badge badge-secondary">Período: [[escala.dataInicio.format('DD/MM/YYYY HH:mm')]] até [[escala.dataFim.format('DD/MM/YYYY HH:mm')]]</span>
-                  <span class="badge badge-secondary">Turno: [[escala.turnoPonto.turno.periodo]]</span>
 
-                </div>
-                <table class="table">
                   <tr>
-                    <td class=""></td>
-                    <td class="">0:00h</td>
-                    <td class="">2:00h</td>
-                    <td class="">4:00h</td>
-                    <td class="">6:00h</td>
-                    <td class="">8:00h</td>
-                    <td class="">10:00h</td>
-                    <td class="">12:00h</td>
-                    <td class="">14:00h</td>
-                    <td class="">16:00h</td>
-                    <td class="">18:00h</td>
-                    <td class="">20:00h</td>
-                    <td class="">22:00h</td>
-                    <td class=""></td>
+                    <td ></td>
+                    <td v-for="hora in horas" class="max-30">[[hora]]:00h</td>
+                    <td class="max-30"></td>
                   </tr>
                   <tr v-for="colaborador in colaboradoresDia(escala, dia)">
-                    <td class="">[[colaborador.id]] - [[colaborador.colaborador.first_name]] / [[ colaborador.colaborador.departamento.nome ]] [[colaborador.status]]</td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada': (0 >= colaborador.dataInicio.format('HH') && 2 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(2 >= colaborador.dataInicio.format('HH') && 4 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(4 >= colaborador.dataInicio.format('HH') && 6 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(6 >= colaborador.dataInicio.format('HH') && 8 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(8 >= colaborador.dataInicio.format('HH') && 10 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(10 >= colaborador.dataInicio.format('HH') && 12 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(12 >= colaborador.dataInicio.format('HH') && 14 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(14 >= colaborador.dataInicio.format('HH') && 16 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(16 >= colaborador.dataInicio.format('HH') && 18 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(18 >= colaborador.dataInicio.format('HH') && 20 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(20 >= colaborador.dataInicio.format('HH') && 22 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
-                    <td v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada':(22 >= colaborador.dataInicio.format('HH') && 23 <= colaborador.dataFim.format('HH')) ? 'escala-ativa' : 'escala-inativa')] "></td>
+                    <td class="">[[colaborador.id]] - [[colaborador.colaborador.first_name]] / [[ colaborador.colaborador.departamento.nome ]]</td>
+
+                      <td v-for="hora in horas" class="max-30" v-bind:class=" [(colaborador.status == 3 ? 'escala-cancelada': (hora >= colaborador.dataInicio.format('HH') && (hora < colaborador.dataFim.format('HH') || (colaborador.dataFim.format('HH') == 23 && colaborador.dataFim.format('mm') > 0) ))  ? 'escala-ativa' : 'escala-inativa')] "></td>
+
                     <td><button title="Remover colaborador"  v-if="escala.programada && colaborador.status != 3" class="btn btn-danger" v-on:click="abreModalRemoveColaborador(escala, colaborador)" data-toggle="modal" data-target="#modalRemoveColaborador" > <i class="icon-remove" style="color:white"></i></button> </td>
 
                   </tr>
@@ -177,6 +164,75 @@
       </ul>
     </div>
   </div>
+
+
+
+
+<!--    Modal  Adicionar Colaborador -->
+<div class="modal fade" id="modalAdicionarColaborador" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleMossdalLabel">Adicionar Colaborador</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" v-if="escalaModal.id">
+          <h2>Adicionar Colaboradora</h2>
+          <div>
+            <label for="adicionar_colaborador">Colaborador:</label>
+            <select v-model="colaboradorModal" id="adicionar_colaborador"  class="form-control">
+                <optgroup label="Selecione um Colaborador"></optgroup>
+                <option v-for="c in colaboradores" v-bind:value="c">[[c.first_name]]</option>
+            </select>
+          </div>
+          <h2>Escala</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Ponto de Alocação</th>
+                        <th>Dia</th>
+                        <th>Colaboradores</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>[[escalaModal.turnoPonto.pontoAlocacao.cliente.nomeFantasia]] </td>
+                        <td>[[escalaModal.turnoPonto.pontoAlocacao.nome]] </td>
+                        <td>[[diaModal.format('DD/MM/YYYY' ) ]]</td>
+                        <td>
+                            <ul>
+                                <li v-for="colaborador in colaboradoresDia(escalaModal, diaModal)" > <strong>[[ colaborador.colaborador.first_name ]]:</strong><br> [[ colaborador.dataInicio.format('DD/MM/YYYY HH:mm')]] <br> [[colaborador.dataFim.format('DD/MM/YYYY HH:mm')]] </li>
+                            </ul>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+          </div>
+
+      <div class="modal-footer">
+           <div style="white-space: pre;" class="alert alert-success" v-if="mensagemSucesso.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemSucesso]]
+            </div>
+            <div style="white-space: pre;" class="alert alert-danger" v-if="mensagemErro.length > 1">
+                <button class="close" data-dismiss="alert">x</button>
+                [[mensagemErro]]
+            </div>
+
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+          <button type="button" v-if="escalaModal.status !== 1" class="btn btn-primary" v-on:click="cancelarEscala(escalaModal)">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--    Modal  Adicionar Colaborador -->
 
 <!--    Modal  Cancela  Escala -->
 <div class="modal fade" id="modalCancelarEscala" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

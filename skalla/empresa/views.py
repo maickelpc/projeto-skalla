@@ -28,7 +28,12 @@ class ColaboradorViewSet(viewsets.ModelViewSet):
 
         queryset = Colaborador.objects.order_by('first_name').all()
         if data:
-            print(data)
-            data = datetime.datetime.strptime(data, '%Y-%m-%d')
-            queryset = Colaborador.objects.exclude(colaborador_periodo__dataInicio__lte=data,colaborador_periodo__dataFim__gte=data)
+            dia = datetime.datetime.strptime(data, '%Y-%m-%d') + timedelta(hours=0)
+            diaSeguinte = datetime.datetime.strptime(data, '%Y-%m-%d') + timedelta(days=1)
+
+            # Pensar melhor nesta logica, para trazer apenas os colaboradores que não tem escala para a DATA em questão
+            queryset = Colaborador.objects\
+                .exclude(colaborador_escala__dataInicio__gte=dia, colaborador_escala__dataInicio__lt=diaSeguinte, colaborador_escala__status__in=[0,1])\
+                .exclude(colaborador_periodo__dataInicio__lte=data,colaborador_periodo__dataFim__gte=data)
+
         return queryset

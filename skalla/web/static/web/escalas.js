@@ -2,6 +2,7 @@ var filtroColaboradorId = 0;
 var filtroClienteId = 0;
 var filtroPontoAlocacaoId = 0;
 
+
 $(document).ready(function(){
 
  $("#id_colaborador").select2({
@@ -113,9 +114,12 @@ var app = new Vue({
       mensagemErro:'',
       mensagemSucesso: '',
       escalas: [],
+      colaboradores: [],
       escalaModal: {},
       colaboradorModal: {},
       dias:[],
+      diaModal: moment(),
+      horas:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
       total: 0,
       carregando: false,
       filtroId: null,
@@ -214,6 +218,23 @@ var app = new Vue({
 
     },
 
+    abreModalAdicionarColaborador: function(escala, dia){
+        this.escalaModal = escala;
+        this.diaModal = dia;
+        this.colaboradorModal = {};
+        this.carregando = true;
+
+        this.$http.get(`/api/colaborador/?data=${this.diaModal.format('YYYY-MM-DD')}`)
+        .then( response => {
+            console.log(response);
+            this.colaboradores = response.body.results;
+        }).catch(erro => {
+            console.log(this.erro);
+            this.mensagemErro = 'Erro ao Buscar os colaboradores.';
+        }).finally(() => {this.carregando = false; })
+
+    },
+
     cancelarEscala: function(escala){
         this.mensagemSucesso = '';
         this.mensagemErro = '';
@@ -295,12 +316,13 @@ var app = new Vue({
         return p;
     },
 
+
     escalasDia: function(dia){
         return this.escalas.filter( x => x.escalaColaborador.filter(y => y.dataInicio.format('YYYYMMDD') === dia.format('YYYYMMDD')).length > 0 );
     },
 
     colaboradoresDia: function(escala, dia){
-        return escala.escalaColaborador.filter(y => y.dataInicio.format('YYYYMMDD') === dia.format('YYYYMMDD'));
+        return escala.escalaColaborador.filter(y => y.status < 2 && (y.dataInicio.format('YYYYMMDD') === dia.format('YYYYMMDD')));
     },
 
     limpaErros: function(){
