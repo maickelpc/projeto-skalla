@@ -64,11 +64,6 @@ $(document).ready(function(){
         });
 
 
-
-
-
-
-
  });
 
 
@@ -117,6 +112,7 @@ var app = new Vue({
       colaboradores: [],
       escalaModal: {},
       colaboradorModal: {},
+      escalasColaborador: null,
       dias:[],
       diaModal: moment(),
       horas:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
@@ -219,11 +215,13 @@ var app = new Vue({
     },
 
     abreModalAdicionarColaborador: function(escala, dia){
+        this.escalasColaborador = null;
         this.escalaModal = escala;
         this.diaModal = dia;
         this.colaboradorModal = {};
         this.carregando = true;
-
+        this.mensagemErro = '';
+        this.mensagemSucesso = '';
         this.$http.get(`/api/colaborador/?data=${this.diaModal.format('YYYY-MM-DD')}`)
         .then( response => {
             console.log(response);
@@ -303,6 +301,31 @@ var app = new Vue({
 
     },
 
+    carregaUltimasEscalas: function(colaborador, dia){
+        this.carregando = true;
+        this.mensagemErro = '';
+        this.escalasColaborador = null;
+        this.$http.get(`/api/escala-colaborador/ultimas/?colaborador=${colaborador.id}&data=${dia.format('YYYY-MM-DD')}`)
+        .then(response => {
+            console.log(response.body);
+            let dados = response.body;
+
+            this.escalasColaborador = dados.map(x => {
+                x.dataInicio = moment(x.dataInicio);
+                x.dataFim = moment(x.dataFim);
+                x.horasCorridas = Math.round(moment.duration(x.dataFim.diff(x.dataInicio)).asHours());
+                
+                return x;
+            });
+
+        }).catch(erro => {
+            console.log(erro);
+            this.mensagemErro = 'Erro ao buscar as ultimas escalas do colaborador';
+        }).finally(() => this.carregando = false);
+
+
+    },
+
     gerarPaginacao: function(total, pagina){
         let p = {
             page: pagina,
@@ -322,7 +345,7 @@ var app = new Vue({
     },
 
     colaboradoresDia: function(escala, dia){
-        return escala.escalaColaborador.filter(y => y.status < 2 && (y.dataInicio.format('YYYYMMDD') === dia.format('YYYYMMDD')));
+        return escala.escalaColaborador.filter(y => y.dataInicio.format('YYYYMMDD') === dia.format('YYYYMMDD'));
     },
 
     limpaErros: function(){

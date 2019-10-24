@@ -32,8 +32,8 @@ class ColaboradorViewSet(viewsets.ModelViewSet):
             diaSeguinte = datetime.datetime.strptime(data, '%Y-%m-%d') + timedelta(days=1)
 
             # Pensar melhor nesta logica, para trazer apenas os colaboradores que não tem escala para a DATA em questão
-            queryset = Colaborador.objects\
-                .exclude(colaborador_escala__dataInicio__gte=dia, colaborador_escala__dataInicio__lt=diaSeguinte, colaborador_escala__status__in=[0,1])\
-                .exclude(colaborador_periodo__dataInicio__lte=data,colaborador_periodo__dataFim__gte=data)
+            queryset = Colaborador.objects.exclude(colaborador_periodo__dataInicio__lte=data,colaborador_periodo__dataFim__gte=data)
+
+            # .exclude(colaborador_escala__dataInicio__gte=dia, colaborador_escala__dataInicio__lt=diaSeguinte,colaborador_escala__status__in=[0, 1])
 
         return queryset

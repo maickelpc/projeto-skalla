@@ -179,13 +179,45 @@
         </button>
       </div>
       <div class="modal-body" v-if="escalaModal.id">
-          <h2>Adicionar Colaboradora</h2>
+          <h2>Adicionar Colaborador</h2>
           <div>
             <label for="adicionar_colaborador">Colaborador:</label>
-            <select v-model="colaboradorModal" id="adicionar_colaborador"  class="form-control">
+            <select v-model="colaboradorModal" id="adicionar_colaborador" v-on:change="carregaUltimasEscalas(colaboradorModal, diaModal)"  class="form-control">
                 <optgroup label="Selecione um Colaborador"></optgroup>
                 <option v-for="c in colaboradores" v-bind:value="c">[[c.first_name]]</option>
             </select>
+          </div>
+
+          <div v-if="escalasColaborador && escalasColaborador.length == 0">
+              <h3>O Colaborador não possui escalas passadas ou futuras.</h3>
+          </div>
+          <div v-if="escalasColaborador && escalasColaborador.length > 0">
+              <h5>Últimas / Próximas Escalas</h5>
+              <table class="table">
+                  <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Ponto</th>
+                        <th>Período</th>
+                        <th>Horas Corridas</th>
+                        <th>Horas Descanso</th>
+                        <th>Data para voltar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr v-for="(e,i) in escalasColaborador">
+
+                        <td> [[e.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia]]</td>
+                        <td>[[e.escala.turnoPonto.pontoAlocacao.nome]]</td>
+                        <td>[[e.dataInicio.format("DD/MM/YYYY HH:mm")]] <br> [[e.dataFim.format("DD/MM/YYYY HH:mm")]]</td>
+                        <td>[[e.horasCorridas]]</td>
+                        <td>[[e.escala.turnoPonto.turno.horasDescanso ]]  </td>
+                        <td>[[diaSemana[e.dataFim.add(e.escala.turnoPonto.turno.horasDescanso, 'hours').format('d')] ]], [[ e.dataFim.add(e.escala.turnoPonto.turno.horasDescanso, 'hours').format('DD-MM-YYYY HH:mm') ]] </td>
+                    </tr>
+
+                  </tbody>
+              </table>
           </div>
           <h2>Escala</h2>
             <table class="table">
@@ -227,7 +259,7 @@
             </div>
 
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
-          <button type="button" v-if="escalaModal.status !== 1" class="btn btn-primary" v-on:click="cancelarEscala(escalaModal)">Confirmar</button>
+          <button type="button" v-if="escalaModal.status !== 1" class="btn btn-primary" v-on:click="acidionarColaborador(colaboradorModal)">Confirmar</button>
       </div>
     </div>
   </div>
@@ -304,7 +336,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" v-if="escalaModal.id && colaboradorModal.id">
+      <div class="modal-body" v-if="escalaModal.id && colaboradorModal.id && colaboradorModal.colaborador">
            <h2>Tem certeza que deseja remover o colaborador [[colaboradorModal.colaborador.first_name]] da escala?</h2>
           <br>
             <table class="table">

@@ -145,28 +145,24 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
 
         queryset = EscalaColaborador.objects.order_by('dataInicio').all()
         if dataInicial:
-            print(dataInicial)
             dataInicial = datetime.datetime.strptime(dataInicial, '%Y-%m-%d')
             queryset = queryset.filter(dataInicio__gte=dataInicial)
 
 
         if dataFinal:
-            print(dataFinal)
             dataFinal = datetime.datetime.strptime(dataFinal, '%Y-%m-%d') + datetime.timedelta(days=1)
             queryset = queryset.filter(dataInicio__lt=dataFinal)
 
 
         if status and int(status) > -1:
             # Status: -1: Todos | 0: Pendente | 1: Confirmado | 4: Executado | 2: Cancelado | 3 - Rejeitado
-
             status = int(status)
-            print(status);
+
             hoje = datetime.datetime.now()
             if status == 4:
                 queryset = queryset.filter(dataInicio__lt=hoje).exclude(status=2).exclude(status=3)
             else:
                 queryset = queryset.filter(dataInicio__gt=hoje).filter(status=status)
-
 
 
         return queryset
@@ -175,20 +171,17 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
     def cancelar(self, request, pk=None):
         escalaColaborador = EscalaColaborador.objects.get(id=pk)
 
-        print("Eita");
         if escalaColaborador.escala.status == 1:
             return Response('Esta escala já foi cancelada em: ' + escalaColaborador.escala.dataCancelamento.strftime("%d/%m/%Y %H:%M:%S"), 400)
 
         if escalaColaborador.status == 3:
             return Response('Esta escala já foi cancelada em: ' + escalaColaborador.dataCancelamento.strftime("%d/%m/%Y %H:%M:%S"), 400)
-
-        print("Eita2");
+        print(request.user.id)
         colaborador = Colaborador.objects.get(pk=request.user.id)
         configuracoes = Configuracao.objects.first()
         agora = pytz.UTC.localize(datetime.datetime.now() + datetime.timedelta(hours=1))
         dias = colaborador.empresa.diasAntecedenciaSolicitacao
         datalimite = escalaColaborador.escala.dataInicio + datetime.timedelta(days=-dias)
-        print("Eita3");
         # Se estourou o tempo limite, e o usuário não é gestor/admin
         if agora > datalimite and not colaborador.groups.filter(pk=configuracoes.grupoGestor.id).exists():
             return Response('Somente Administradores podem cancelar esta escala após: ' + datalimite.strftime("%d/%m/%Y %H:%M:%S"), 400)
@@ -198,16 +191,34 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 timezone.activate('America/Sao_Paulo')
                 agora = timezone.now()
-                print("Eita4");
                 escalaColaborador.dataCancelamento = agora
                 escalaColaborador.status = 3
                 escalaColaborador.save()
-                print("Eita5");
                 serializer = EscalaColaboradorSimplificadoSerializer(escalaColaborador)
 
                 return Response(serializer.data)
         except:
             return Response('Erro ao Cancelar a escala', 400)
+
+    @action(methods=['get'], detail=False)
+    def ultimas(self, request):
+
+        data = self.request.query_params.get('data', None)
+        colaborador = int(self.request.query_params.get('colaborador', None))
+
+        if(data):
+            data = datetime.datetime.strptime(data, '%Y-%m-%d')
+        else:
+            data = datetime.datetime.now()
+
+        escalasAnteriores = EscalaColaborador.objects.filter(colaborador=colaborador, status__in=[0,1], dataInicio__lte=data).order_by('-dataInicio').all()[:3]
+        escalasFuturas = EscalaColaborador.objects.filter(colaborador=colaborador, status__in=[0,1], dataInicio__gte=data).order_by('dataInicio').all()[:3]
+
+        escalas = escalasAnteriores | escalasFuturas;
+
+        serializer = EscalaColaboradorSerializer(escalas, many=True)
+
+        return Response(serializer.data)
 
     @action(methods=['post'], detail=False)
     def confirma(self, request):
