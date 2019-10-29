@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import Escala, Turno, Turno_PontoAlocacao, PontoAlocacao, Cliente, PerfilJornada, EscalaColaborador
 from django import forms
 from .models import Colaborador
-from admin_auto_filters.filters import AutocompleteFilter
 from django.urls import path
 
 
@@ -55,11 +54,6 @@ class ClienteAdmin(admin.ModelAdmin):
 
 admin.site.register(Cliente, ClienteAdmin)
 
-
-
-class ClienteAutoFilter(AutocompleteFilter):
-    title = 'Cliente'
-    field_name = 'cliente'
 
 class PontoAlocacaoAdmin(admin.ModelAdmin):
     list_display = ['id','cliente','nome','cidade']

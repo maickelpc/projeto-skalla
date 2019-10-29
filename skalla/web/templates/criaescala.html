@@ -56,6 +56,8 @@
                     </select>
                 </li>
             </ul>
+
+            <button type="button" class="btn btn-primary" v-on:click="salvaEscala()">Salvar Escala</button>
         </form>
     </div>
 
@@ -102,7 +104,7 @@
           <div class="modal-body" v-if="escalaColaborador.dataInicio && escalaColaborador.dataFim">
             Adicionar Colaborador em [[ escalaColaborador.dataInicio ]] - [[ escalaColaborador.dataFim ]]. <br/>
             <p v-for="c in colaboradoresDisponiveis" >
-                [[ c.first_name ]] [[ c.last_name ]]
+                [[ c.first_name ]] [[ c.last_name ]] - <button v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</button>
             </p>
           </div>
           <div class="modal-footer">
@@ -113,7 +115,10 @@
       </div>
     </div>
   </div>
-
+<script type="application/javascript">
+    var token = '{{csrf_token}}';
+    var userId = "{{request.user.id}}";
+</script>
 <script type="application/javascript">
 
         var app = new Vue({
@@ -136,14 +141,16 @@
                 escalaColaborador: {
                     dataInicio: null,
                     dataFim: null,
-                    colaborador: null
+                    colaborador: {}
                 },
+                escalaColaboradorList: [],
                 escala : {
                     "dataInicio": null,
                     "dataFim": null,
                     "dataDuplicacao": null,
                     "dataCancelamento": null,
                     "status": null,
+                    "escalaColaboradorList": [],
                     "perfil": {
                         "descricao": "",
                         "tipo": "",
@@ -202,7 +209,7 @@
                     this.escala.dataInicio = moment(val, 'YYYY-MM-DD');
                     this.escala.dataFim = moment(val, 'YYYY-MM-DD');
                     this.escala.dataFim.add((this.escala.perfil.dias - 1), 'd');
-                    console.log(this.escala);
+                    //console.log(this.escala);
                 }
             },
             filters: {
@@ -220,12 +227,25 @@
               }
             },
             methods: {
+                adicionaColaboradorEscala(colaborador) {
+                    this.escalaColaborador.colaborador = colaborador;
+                    this.escalaColaboradorList.push(this.escalaColaborador);
+                    this.escalaColaborador = {
+                        dataInicio: null,
+                        dataFim: null,
+                        colaborador: {}
+                    };
+
+                    console.log(this.escalaColaboradorList);
+                },
                 abreModalColaboradores(dataInicial, dia, horaInicio, horaFim) {
                     console.log(dataInicial + " " + dia  + " " + horaInicio  + " " + horaFim);
+
                     let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('DD/MM/YYYY');
                     this.escalaColaborador.dataInicio = dataEscala + " " + horaInicio;
                     this.escalaColaborador.dataFim = dataEscala + " " + horaFim;
-                    console.log(this.escalaColaborador);
+                    //this.escalaColaboradorList.push(escalaColaborador);
+                    //console.log(this.escalaColaborador);
                 },
                 getIntervaloHoras: function(horaInicio, horaFim) {
                     let inicio = moment(horaInicio, "HH:mm");
@@ -305,6 +325,25 @@
                        console.log(err);
                       })
                  },
+                salvaEscala() {
+
+                    let headers = {
+                        'Content-Type': 'application/json',
+                        "X-CSRFToken": token
+                      };
+                    this.escala.escalaColaboradorList = this.escalaColaboradorList;
+                    this.$http.post(`/api/escala/`, this.escala, {headers})
+                    .then( response =>  {
+                      this.mensagemSucesso = `Escala salva com sucesso.`;
+
+                    }).catch( erro => {
+                        this.mensagemErro = `Erro ao registrar escala`;
+                        console.log(erro);
+                    })
+                    .finally(() => {
+                        this.carregando = false;
+                    });
+                },
             }
         })
 

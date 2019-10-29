@@ -22,6 +22,6 @@ def index(request):
     #     'meuform': FormInicialEscala(),
     #     'escala' : Escala()
     # }
-    # return render(request, 'criaEscala.html', contexto)
-    return render(request, 'criaEscala.html')
+    # return render(request, 'criaescala.html', contexto)
+    return render(request, 'criaescala.html')
 

@@ -14,6 +14,10 @@ def minhaEscala(request):
 
 
 @login_required(login_url='/admin/login')
+def criaEscala(request):
+    return render(request, 'criaescala.html', {})
+
+@login_required(login_url='/admin/login')
 def gestaoEscala(request):
     return render(request, 'gestaoescalas.html',{})
 

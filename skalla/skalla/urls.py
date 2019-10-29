@@ -10,8 +10,8 @@ from core import views
 from web import views as webview
 
 urlpatterns = [
-    # path('', views.hello),
     path('', views.index),
+    path('criaescala/', webview.criaEscala),
     path('minhaescala/', webview.minhaEscala),
     path('gestaoescalas/', webview.gestaoEscala),
     path('solicitacoes/', webview.solicitacoes),

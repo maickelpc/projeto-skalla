@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
-    'admin_auto_filters',
     'web',
     'api',
     'core',
