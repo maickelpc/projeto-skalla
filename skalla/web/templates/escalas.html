@@ -179,13 +179,17 @@
         </button>
       </div>
       <div class="modal-body" v-if="escalaModal.id">
-          <h2>Adicionar Colaborador</h2>
+          <h2>Adicionar Colaborador [[diaModal.format("DD/MM/YYYY")]]</h2>
           <div>
             <label for="adicionar_colaborador">Colaborador:</label>
             <select v-model="colaboradorModal" id="adicionar_colaborador" v-on:change="carregaUltimasEscalas(colaboradorModal, diaModal)"  class="form-control">
                 <optgroup label="Selecione um Colaborador"></optgroup>
                 <option v-for="c in colaboradores" v-bind:value="c">[[c.first_name]]</option>
             </select>
+          </div>
+          <div v-if="colaboradorModal">
+              <p>Entrada: <v-date-picker v-model="picker"></v-date-picker></p>
+              <p>Saída: <v-date-picker v-model="picker"></v-date-picker></p>
           </div>
 
           <div v-if="escalasColaborador && escalasColaborador.length == 0">

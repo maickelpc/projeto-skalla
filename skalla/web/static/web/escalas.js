@@ -64,6 +64,21 @@ $(document).ready(function(){
         });
 
 
+
+  $( "#dataEntrada" ).datepicker();
+  $( "#dataSaida" ).datepicker();
+
+  $(".data").datepicker({
+      dateFormat: 'dd/mm/yy',
+      dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+      dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+      dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+      monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+      monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+      nextText: 'Próximo',
+      prevText: 'Anterior'
+  });
+
  });
 
 
@@ -103,9 +118,14 @@ Vue.filter('data', function(value) {
   }
 });
 
+Vue.config.lang = 'pt-br';
+
 var app = new Vue({
   el: '#buscaescala',
   data: {
+      vuetify: new Vuetify(),
+      picker: new Date().toISOString().substr(0, 10),
+
       mensagemErro:'',
       mensagemSucesso: '',
       escalas: [],
@@ -133,6 +153,9 @@ var app = new Vue({
    created: function() {
     this.buscar();
   },
+  // components: {
+  // 	v-date-picker
+  // },
   methods: {
 
     buscar: function(pagina = null) {
@@ -301,6 +324,12 @@ var app = new Vue({
 
     },
 
+
+    acidionarColaborador: function(escalaColaborador){
+
+      alert("Minha Rola");
+    },
+
     carregaUltimasEscalas: function(colaborador, dia){
         this.carregando = true;
         this.mensagemErro = '';
@@ -314,7 +343,7 @@ var app = new Vue({
                 x.dataInicio = moment(x.dataInicio);
                 x.dataFim = moment(x.dataFim);
                 x.horasCorridas = Math.round(moment.duration(x.dataFim.diff(x.dataInicio)).asHours());
-                
+
                 return x;
             });
 
@@ -360,5 +389,6 @@ var app = new Vue({
   mounted () {
 
   },
+
   delimiters: ["[[", "]]"]
 });
