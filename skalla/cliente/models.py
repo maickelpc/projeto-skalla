@@ -86,15 +86,15 @@ class Turno(models.Model):
 
 
 class Turno_PontoAlocacao(models.Model):
-    id = models.AutoField(primary_key=True)
 
+    id = models.AutoField(primary_key=True)
     turno = models.ForeignKey(Turno, on_delete=models.PROTECT, related_name="turno_ponto", verbose_name="Turno")
     pontoAlocacao = models.ForeignKey(PontoAlocacao, on_delete=models.PROTECT, related_name="ponto_turno", verbose_name="Ponto de Alocação")
     qtdeColaboradores = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)],verbose_name="Quantidade de colaboradores")
 
 
     def __str__(self):
-        return self.pontoAlocacao.cliente.nome + '/' + self.turno.descricao + ' - ' + self.pontoAlocacao.nome
+        return self.id.__str__() + ' - ' + self.turno.id.__str__() + ' / ' + self.pontoAlocacao.id.__str__()
 
     class Meta:
         verbose_name = "Turno / Ponto de Alocação"
@@ -126,7 +126,7 @@ class Escala(models.Model):
     dataFim = models.DateTimeField()
     dataDuplicacao = models.DateTimeField()
     dataCancelamento = models.DateTimeField(null=True, blank=True)
-    status = models.PositiveSmallIntegerField( default=0) # 0 - Ativa / 1 Cancelada
+    status = models.PositiveSmallIntegerField( default=0)     # 0 - Ativa / 1 Cancelada
 
     def __str__(self):
         return self.perfil.descricao + ' / ' + self.dataInicio.strftime("%d %m %Y %H:%M")
