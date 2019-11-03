@@ -195,6 +195,9 @@
                     this.getTurnosPonto(val.id);
                     this.escala.turnoPonto.pontoAlocacao = val;
                 },
+                turno: function(val) {
+                    this.escala.turnoPonto.turno = val;
+                },
                 perfil: function(val) {
                     this.escala.perfil = val;
                     if (this.escala.dataInicio) {
@@ -352,6 +355,3 @@
   </div>
 
 {% endblock %}
-
-
-

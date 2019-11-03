@@ -65,6 +65,7 @@ class EscalaViewSet(viewsets.ModelViewSet):
         # maickel
         dados = request.data
         idPerfilJornada = int(dados['perfil']['id'])
+
         idTurno = int(dados['turnoPonto']['turno']['id'])
         idPontoAlocacao = int(dados['turnoPonto']['pontoAlocacao']['id'])
 
@@ -104,7 +105,7 @@ class EscalaViewSet(viewsets.ModelViewSet):
 
 
 
-        return Response(dados, 400)
+
 
     def get_queryset(self):
 
@@ -174,6 +175,44 @@ class EscalaViewSet(viewsets.ModelViewSet):
         except:
             return Response('Erro ao Cancelar a escala', 400)
 
+    @action(methods=['post'], detail=True)
+    def adicionarcolaborador(self, request, pk=None):
+
+
+        escala = Escala.objects.get(id=pk)
+        if escala.status == 1:
+            return Response('Esta escala já foi cancelada em: ' + escala.dataCancelamento.strftime("%d/%m/%Y %H:%M:%S"), 400)
+
+        timezone.activate('America/Sao_Paulo')
+        dados = request.data
+        colabodadorId = int(dados['colaboradorId'])
+
+
+        dataInicio = str(dados['dia']) + ' ' + str(dados['horaInicio'])
+        dataInicio = datetime.datetime.strptime(dataInicio, '%Y-%m-%d %H:%M')
+        dataFim = str(dados['dia']) + ' ' + str(dados['horaFim'])
+        dataFim = datetime.datetime.strptime(dataFim, '%Y-%m-%d %H:%M')
+
+        if(dataInicio > dataFim):
+            return Response('A hora de entrada deve ser anterior à hora de saída', 400)
+
+        try:
+            colaborador = Colaborador.objects.get(pk=colabodadorId)
+
+            escalaColaborador = EscalaColaborador()
+            escalaColaborador.escala = escala
+            escalaColaborador.colaborador = colaborador
+
+            escalaColaborador.dataInicio = dataInicio
+            escalaColaborador.dataFim = dataFim
+            print("aqui")
+            escalaColaborador.save()
+            print("aqui")
+
+            # serializer = EscalaColaboradorSimplificadoSerializer(escalaColaborador)
+            return Response({"Ok"})
+        except:
+            return Response(sys.exc_info()[0], 400)
 
 
 class EscalaColaboradorViewSet(viewsets.ModelViewSet):

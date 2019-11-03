@@ -174,22 +174,25 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleMossdalLabel">Adicionar Colaborador</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+        <button type="button" v-on:click="buscar()" class="close" data-dismiss="modal" aria-label="Fechar">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body" v-if="escalaModal.id">
           <h2>Adicionar Colaborador [[diaModal.format("DD/MM/YYYY")]]</h2>
+          <h4>Turno [[escalaModal.turnoPonto.turno.descricao]]</h4>
+          <p>Horas [[escalaModal.turnoPonto.turno.horasTrabalhadas]]</p>
           <div>
             <label for="adicionar_colaborador">Colaborador:</label>
-            <select v-model="colaboradorModal" id="adicionar_colaborador" v-on:change="carregaUltimasEscalas(colaboradorModal, diaModal)"  class="form-control">
+            <select v-model="escalaColaboradorModalAdicionar.colaborador" id="adicionar_colaborador" v-on:change="carregaUltimasEscalas(escalaColaboradorModalAdicionar.colaborador, diaModal)"  class="form-control">
                 <optgroup label="Selecione um Colaborador"></optgroup>
                 <option v-for="c in colaboradores" v-bind:value="c">[[c.first_name]]</option>
             </select>
           </div>
-          <div v-if="colaboradorModal">
-              <p>Entrada: <v-date-picker v-model="picker"></v-date-picker></p>
-              <p>Saída: <v-date-picker v-model="picker"></v-date-picker></p>
+          <div v-if="escalaColaboradorModalAdicionar.horaInicio">
+
+              <p>Hora de Entrada: <input type="time" min="00:00" max="23:59" v-model="escalaColaboradorModalAdicionar.colaborador.horaInicio" required> </p>
+              <p>Hora de Saída: <input type="time" min="00:00" max="23:59" v-model="escalaColaboradorModalAdicionar.colaborador.horaFim" required> </p>
           </div>
 
           <div v-if="escalasColaborador && escalasColaborador.length == 0">
@@ -262,8 +265,8 @@
                 [[mensagemErro]]
             </div>
 
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
-          <button type="button" v-if="escalaModal.status !== 1" class="btn btn-primary" v-on:click="acidionarColaborador(colaboradorModal)">Confirmar</button>
+          <button type="button" class="btn btn-secondary" v-on:click="buscar()" data-dismiss="modal">Voltar</button>
+          <button type="button" v-if="!escalaColaboradorModalAdicionar.adicionado" class="btn btn-primary" v-on:click="acidionarColaborador(escalaColaboradorModalAdicionar)">Confirmar</button>
       </div>
     </div>
   </div>
@@ -340,6 +343,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+
       <div class="modal-body" v-if="escalaModal.id && colaboradorModal.id && colaboradorModal.colaborador">
            <h2>Tem certeza que deseja remover o colaborador [[colaboradorModal.colaborador.first_name]] da escala?</h2>
           <br>
