@@ -1,5 +1,8 @@
+import sys
+
 from django.utils import timezone
 import datetime
+import json
 import pytz
 from django.db import transaction
 from django.shortcuts import render
@@ -56,6 +59,53 @@ class EscalaViewSet(viewsets.ModelViewSet):
     search_fields = ()
     filter_fields = ['id','perfil','status']
     ordering_fields = '__all__'
+    parser_classes = [JSONParser]
+
+    def create(self, request, *args, **kwargs):
+        # maickel
+        dados = request.data
+        idPerfilJornada = int(dados['perfil']['id'])
+
+        idTurno = int(dados['turnoPonto']['turno']['id'])
+        idPontoAlocacao = int(dados['turnoPonto']['pontoAlocacao']['id'])
+
+        try:
+            escala = Escala()
+            perfil = PerfilJornada.objects.get(id=idPerfilJornada)
+            turnoPonto = Turno_PontoAlocacao.objects.filter(turno=idTurno, pontoAlocacao=idPontoAlocacao).get()
+            with transaction.atomic():
+                escala.perfil = perfil
+                escala.turnoPonto = turnoPonto
+                escala.dataInicio = pytz.utc.localize(datetime.datetime.strptime(dados['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S'))
+                escala.dataFim = pytz.utc.localize(datetime.datetime.strptime(dados['dataFim'][:19], '%Y-%m-%dT%H:%M:%S'))
+
+                if perfil.duplicar:
+                    escala.dataDuplicacao = escala.dataFim + datetime.timedelta(hours=-perfil.horasAntecedenciaDuplicacao)
+                else:
+                    escala.dataDuplicacao = datetime.datetime.now(pytz.utc)
+
+
+                escala.save()
+                timezone.activate('America/Sao_Paulo')
+                for colaborador in dados['escalaColaboradorList']:
+                    idColaborador = int(colaborador['colaborador']['id'])
+                    c = Colaborador.objects.get(pk=idColaborador)
+
+                    escalaColaborador = EscalaColaborador()
+                    escalaColaborador.escala = escala
+                    escalaColaborador.colaborador = c
+                    escalaColaborador.dataInicio = datetime.datetime.strptime(colaborador['dataInicio'][:19], '%d/%m/%Y %H:%M:%S' )
+                    escalaColaborador.dataFim = datetime.datetime.strptime(colaborador['dataFim'][:19], '%d/%m/%Y %H:%M:%S')
+                    escalaColaborador.save()
+
+            serializer = EscalaSerializer(escala)
+            return Response(serializer.data)
+        except:
+            return Response(sys.exc_info()[0], 400)
+
+
+
+
 
     def get_queryset(self):
 
@@ -125,6 +175,44 @@ class EscalaViewSet(viewsets.ModelViewSet):
         except:
             return Response('Erro ao Cancelar a escala', 400)
 
+    @action(methods=['post'], detail=True)
+    def adicionarcolaborador(self, request, pk=None):
+
+
+        escala = Escala.objects.get(id=pk)
+        if escala.status == 1:
+            return Response('Esta escala já foi cancelada em: ' + escala.dataCancelamento.strftime("%d/%m/%Y %H:%M:%S"), 400)
+
+        timezone.activate('America/Sao_Paulo')
+        dados = request.data
+        colabodadorId = int(dados['colaboradorId'])
+
+
+        dataInicio = str(dados['dia']) + ' ' + str(dados['horaInicio'])
+        dataInicio = datetime.datetime.strptime(dataInicio, '%Y-%m-%d %H:%M')
+        dataFim = str(dados['dia']) + ' ' + str(dados['horaFim'])
+        dataFim = datetime.datetime.strptime(dataFim, '%Y-%m-%d %H:%M')
+
+        if(dataInicio > dataFim):
+            return Response('A hora de entrada deve ser anterior à hora de saída', 400)
+
+        try:
+            colaborador = Colaborador.objects.get(pk=colabodadorId)
+
+            escalaColaborador = EscalaColaborador()
+            escalaColaborador.escala = escala
+            escalaColaborador.colaborador = colaborador
+
+            escalaColaborador.dataInicio = dataInicio
+            escalaColaborador.dataFim = dataFim
+            print("aqui")
+            escalaColaborador.save()
+            print("aqui")
+
+            # serializer = EscalaColaboradorSimplificadoSerializer(escalaColaborador)
+            return Response({"Ok"})
+        except:
+            return Response(sys.exc_info()[0], 400)
 
 
 class EscalaColaboradorViewSet(viewsets.ModelViewSet):

@@ -132,7 +132,9 @@ var app = new Vue({
       colaboradores: [],
       escalaModal: {},
       colaboradorModal: {},
+      escalaColaboradorModalAdicionar: {},
       escalasColaborador: null,
+      escalaColaboradorModal: null,
       dias:[],
       diaModal: moment(),
       horas:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
@@ -238,13 +240,19 @@ var app = new Vue({
     },
 
     abreModalAdicionarColaborador: function(escala, dia){
-        this.escalasColaborador = null;
+        this.escalaColaboradorModalAdicionar = {colaborador: {}};
+        this.escalaColaboradorModalAdicionar.horaInicio = escala.turnoPonto.turno.horaInicio;
+        this.escalaColaboradorModalAdicionar.horaFim = escala.turnoPonto.turno.horaFim;
+        this.escalaColaboradorModalAdicionar.dia = dia;
+        this.escalaColaboradorModalAdicionar.adicionado = false;
+        this.escalasColaborador = {};
         this.escalaModal = escala;
         this.diaModal = dia;
         this.colaboradorModal = {};
         this.carregando = true;
         this.mensagemErro = '';
         this.mensagemSucesso = '';
+        console.log(escala);
         this.$http.get(`/api/colaborador/?data=${this.diaModal.format('YYYY-MM-DD')}`)
         .then( response => {
             console.log(response);
@@ -313,6 +321,7 @@ var app = new Vue({
         this.mensagemSucesso = '';
         this.mensagemErro = '';
         this.mostrarColaboradores = false;
+
         this.colaboradorModal = colaborador;
         if(this.colaboradorModal.dataSolicitacaoAlteracao){
             this.colaboradorModal.dataSolicitacaoAlteracao = moment(this.colaboradorModal.dataSolicitacaoAlteracao);
@@ -322,15 +331,52 @@ var app = new Vue({
         }
         this.escalaModal = escala;
 
+
     },
 
 
     acidionarColaborador: function(escalaColaborador){
 
-      alert("Minha Rola");
+      let obj = {
+        escalaId: this.escalaModal.id,
+        colaboradorId: escalaColaborador.colaborador.id,
+        dia: escalaColaborador.dia.format("YYYY-MM-DD"),
+        horaInicio: escalaColaborador.colaborador.horaInicio,
+        horaFim: escalaColaborador.colaborador.horaFim
+      };
+
+      console.log(obj);
+
+
+      this.carregando = true;
+      let headers = {
+          'Content-Type': 'application/json',
+          "X-CSRFToken": token
+        };
+
+      this.$http.post(`/api/escala/${obj.escalaId}/adicionarcolaborador/`, obj, {headers})
+      .then(dados => {
+          console.log(dados);
+
+          let retorno = dados.body;
+          this.escalaColaboradorModalAdicionar.adicionado = true;
+          this.mensagemSucesso = `Colaborador ${this.escalaColaboradorModalAdicionar.colaborador.first_name} foi adicionado à escala com sucesso!`;
+
+
+      }).catch(erros => {
+          console.log(erros);
+          this.mensagemErro = erros.bodyText;
+
+      })
+      .finally(()=>{
+          this.carregando = false;
+      });
+
+
     },
 
     carregaUltimasEscalas: function(colaborador, dia){
+
         this.carregando = true;
         this.mensagemErro = '';
         this.escalasColaborador = null;
