@@ -29,10 +29,11 @@ def imprimirMinhaEscala(request):
     dataInicial = dataInicial - dt.timedelta(days=1)
     dataFinal = dataFinal + dt.timedelta(days=1)
 
-    colaborador = request.user.id
-    escalas = EscalaColaborador.objects.filter(colaborador=colaborador).filter(dataInicio__gt=dataInicial,dataInicio__lt=dataFinal).all() #.order_by(dataInicial).all()
+    c = request.user.id
+    escalas = EscalaColaborador.objects.filter(colaborador=c).filter(dataInicio__gt=dataInicial,dataInicio__lt=dataFinal).order_by('dataInicio').all()
+    colaborador = escalas[0].colaborador
 
-    return render(request, 'imprimirminhaescala.html', {'escalas': escalas})
+    return render(request, 'imprimirminhaescala.html', {'escalas': escalas, 'colaborador': colaborador, 'datainicial': dataInicial, 'datafinal': dataFinal, 'agora': dt.datetime.now()})
 
 
 @login_required(login_url='/admin/login')
