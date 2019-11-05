@@ -13,6 +13,7 @@ urlpatterns = [
     path('', views.index),
     path('criaescala/', webview.criaEscala),
     path('minhaescala/', webview.minhaEscala),
+    path('imprimirminhaescala/', webview.imprimirMinhaEscala),
     path('gestaoescalas/', webview.gestaoEscala),
     path('solicitacoes/', webview.solicitacoes),
     path('escalas/', webview.escalas),
