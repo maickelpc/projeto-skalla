@@ -94,12 +94,12 @@
                               [[ turno.turno.horaInicio, (i - 1) | horas ]]
                           </p>
                           <ul>
-                              <li v-for="c in colaboradoresDia(p, (turno.turno.horaInicio, (i - 1)))">[[ c ]]</li>
+                              <li v-for="c in colaboradoresDia(p, (turno.turno.horaInicio, (i - 1)))">[[ c.colaborador.first_name ]] [[ c.colaborador.last_name ]]</li>
                           </ul>
                           <br/>
-                            <a style="cursor: pointer;" v-on:click="abreModalColaboradores(
+                            <button style="cursor: pointer;" v-on:click="abreModalColaboradores(
                                             dataInicio, p, turno.turno.horaInicio, turno.turno.horaFim)"
-                                            data-toggle="modal" data-target="#modalColaboradores">Adicionar Colaboradores</a>
+                                            data-toggle="modal" data-target="#modalColaboradores">Adicionar</button>
 
                       </td>
                   </tr>
@@ -121,7 +121,7 @@
           <div class="modal-body" v-if="escalaColaborador.dataInicio && escalaColaborador.dataFim">
             Adicionar Colaborador em [[ escalaColaborador.dataInicio ]] - [[ escalaColaborador.dataFim ]]. <br/>
             <p v-for="c in colaboradoresDisponiveis" >
-                [[ c.first_name ]] [[ c.last_name ]] - <button type="button" v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary adicionaColaborador">Adicionar</button>
+                [[ c.first_name ]] [[ c.last_name ]] <button type="button" v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary adicionaColaborador right">Adicionar</button>
             </p>
           </div>
         </div>

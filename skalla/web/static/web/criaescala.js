@@ -130,11 +130,9 @@ var app = new Vue({
             console.log(this.escalaColaboradorList);
         },
         abreModalColaboradores(dataInicial, dia, horaInicio, horaFim) {
-            console.log(dataInicial + " " + dia  + " " + horaInicio  + " " + horaFim);
-
             let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('DD/MM/YYYY');
-            this.escalaColaborador.dataInicio = dataEscala + " " + horaInicio;
-            this.escalaColaborador.dataFim = dataEscala + " " + horaFim;
+            this.escalaColaborador.dataInicio = moment(dataEscala + " " + horaInicio);
+            this.escalaColaborador.dataFim = moment(dataEscala + " " + horaFim);
             //this.escalaColaboradorList.push(escalaColaborador);
             //console.log(this.escalaColaborador);
         },
@@ -235,13 +233,20 @@ var app = new Vue({
                 this.carregando = false;
             });
         },
+        dataEstaPeriodo(inicio, fim, dataCelula) {
+            return moment(moment(dataCelula).add(1, 'm')).isBetween(inicio, fim);
+        },
         colaboradoresDia: function(dia, hora){
             let dataEscala = moment(this.escala.dataInicio).add(dia - 1, 'days').format('DD/MM/YYYY');
             let horas = this.turno.turno.horaInicio.split(':');
-            let horaEscala = moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm:ss');
-            let dataCelula = dataEscala + ' ' + horaEscala;
-            console.log(dataCelula);
-            return this.escala.escalaColaboradorList.filter(y => y.escalaColaboradorList.dataInicio.format('YYYYMMDD HH:mm:ss') === dataCelula.format('YYYYMMDD HH:mm:ss'));
+            let horaEscala = moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm');
+            let dataCelula = moment(dataEscala + ' ' + horaEscala);
+            //console.log(this.escalaColaboradorList);
+            return this.escalaColaboradorList.filter(
+                y => this.dataEstaPeriodo(y.dataInicio.format('DD/MM/YYYY HH:mm'),
+                                     y.dataFim.format('DD/MM/YYYY HH:mm'),
+                                     dataCelula.format('DD/MM/YYYY HH:mm'))
+            );
         },
     }
 });
