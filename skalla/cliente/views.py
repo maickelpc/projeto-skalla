@@ -187,7 +187,6 @@ class EscalaViewSet(viewsets.ModelViewSet):
         dados = request.data
         colabodadorId = int(dados['colaboradorId'])
 
-
         dataInicio = str(dados['dia']) + ' ' + str(dados['horaInicio'])
         dataInicio = datetime.datetime.strptime(dataInicio, '%Y-%m-%d %H:%M')
         dataFim = str(dados['dia']) + ' ' + str(dados['horaFim'])
@@ -198,7 +197,6 @@ class EscalaViewSet(viewsets.ModelViewSet):
 
         try:
             colaborador = Colaborador.objects.get(pk=colabodadorId)
-
             escalaColaborador = EscalaColaborador()
             escalaColaborador.escala = escala
             escalaColaborador.colaborador = colaborador
