@@ -97,9 +97,9 @@
                               <li v-for="c in colaboradoresDia(p, (turno.turno.horaInicio, (i - 1)))">[[ c.colaborador.first_name ]] [[ c.colaborador.last_name ]]</li>
                           </ul>
                           <br/>
-                            <button style="cursor: pointer;" v-on:click="abreModalColaboradores(
+                            <a style="cursor: pointer;" v-on:click="abreModalColaboradores(
                                             dataInicio, p, turno.turno.horaInicio, turno.turno.horaFim)"
-                                            data-toggle="modal" data-target="#modalColaboradores">Adicionar</button>
+                                            data-toggle="modal" data-target="#modalColaboradores">Adicionar Colaborador</a>
 
                       </td>
                   </tr>
@@ -119,11 +119,19 @@
             </button>
           </div>
           <div class="modal-body" v-if="escalaColaborador.dataInicio && escalaColaborador.dataFim">
-            Adicionar Colaborador em [[ escalaColaborador.dataInicio ]] - [[ escalaColaborador.dataFim ]]. <br/>
-            <p v-for="c in colaboradoresDisponiveis" >
-                [[ c.first_name ]] [[ c.last_name ]] <button type="button" v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary adicionaColaborador right">Adicionar</button>
+            Adicionar Colaborador em [[ escalaColaborador.dataInicio | moment ]] - [[ escalaColaborador.dataFim | moment ]]. <br/>
+{#            <p v-for="c in colaboradoresDisponiveis" >#}
+{#                [[ c.first_name ]] [[ c.last_name ]] <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a>#}
+{#            </p>#}
+
+              <p v-for="c in retornaColaboradoresDisponiveisData(escalaColaborador.dataInicio)" >
+                [[ c.first_name ]] [[ c.last_name ]] <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a>
             </p>
           </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary">Salvar mudanças</button>
+            </div>
         </div>
       </div>
     </div>

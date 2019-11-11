@@ -68,7 +68,6 @@ class EscalaViewSet(viewsets.ModelViewSet):
 
         idTurno = int(dados['turnoPonto']['turno']['id'])
         idPontoAlocacao = int(dados['turnoPonto']['pontoAlocacao']['id'])
-
         try:
             escala = Escala()
             perfil = PerfilJornada.objects.get(id=idPerfilJornada)
@@ -94,8 +93,8 @@ class EscalaViewSet(viewsets.ModelViewSet):
                     escalaColaborador = EscalaColaborador()
                     escalaColaborador.escala = escala
                     escalaColaborador.colaborador = c
-                    escalaColaborador.dataInicio = datetime.datetime.strptime(colaborador['dataInicio'][:19], '%d/%m/%Y %H:%M:%S' )
-                    escalaColaborador.dataFim = datetime.datetime.strptime(colaborador['dataFim'][:19], '%d/%m/%Y %H:%M:%S')
+                    escalaColaborador.dataInicio = datetime.datetime.strptime(colaborador['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S')
+                    escalaColaborador.dataFim = datetime.datetime.strptime(colaborador['dataFim'][:19], '%Y-%m-%dT%H:%M:%S')
                     escalaColaborador.save()
 
             serializer = EscalaSerializer(escala)
