@@ -117,6 +117,7 @@ var app = new Vue({
     methods: {
         adicionaColaboradorEscala(colaborador) {
             this.escalaColaborador.colaborador = colaborador;
+            this.horasDesdeUltimaEscala(colaborador.id)
             this.escalaColaboradorList.push(this.escalaColaborador);
             this.escalaColaborador = {
                 dataInicio: null,
@@ -243,6 +244,24 @@ var app = new Vue({
 
             }).catch( erro => {
                 this.mensagemErro = `Erro ao registrar escala`;
+                console.log(erro);
+            })
+            .finally(() => {
+                this.carregando = false;
+            });
+        },
+        horasDesdeUltimaEscala(colaborador) {
+            let headers = {
+                'Content-Type': 'application/json',
+                "X-CSRFToken": token
+              };
+            this.$http.get(`/api/escala/horasdesdeultimaescala/?idcolaborador=`+colaborador)
+            .then( response =>  {
+                console.log(response.data)
+                this.mensagemSucesso = `Horas Recuperadas com sucesso.`;
+
+            }).catch( erro => {
+                this.mensagemErro = `Erro ao recuperar horas do colaborador.`;
                 console.log(erro);
             })
             .finally(() => {
