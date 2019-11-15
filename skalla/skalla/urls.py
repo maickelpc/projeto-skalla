@@ -8,11 +8,11 @@ from api.urls import RotasApi
 from django.conf import settings
 from django.conf.urls.static import static
 
-from core import views
+# from core import views
 from web import views as webview
 
 urlpatterns = [
-    path('', views.index),
+    path('', webview.criaEscala),
     path('criaescala/', webview.criaEscala),
     path('minhaescala/', webview.minhaEscala),
     path('imprimirminhaescala/', webview.imprimirMinhaEscala),

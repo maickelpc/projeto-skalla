@@ -204,35 +204,48 @@ SUIT_CONFIG = {
             'icon':'icon-list',
             'url': '/minhaescala/'
         },
+
+        {
+            'label': 'Criar Escalas',
+            'icon':'icon-list',
+            'url': '/criaescala/',
+            'permissions': 'cliente.add_escala'
+        },
+        {
+            'label': 'Gerenciar Escalas',
+            'icon':'icon-calendar',
+            'url': '/escalas/',
+            'permissions': 'cliente.add_escala'
+        },
         {
             'label': 'Imprimir Escalas',
             'icon':'icon-list',
-            'url': '/imprimirescalas/'
+            'url': '/imprimirescalas/',
+            'permissions': 'cliente.view_escala'
         },
         {
             'label': 'Solicitações',
             'icon':'icon-envelope',
-            'url': '/solicitacoes/'
-        },
-{
-            'label': 'Escalas',
-            'icon':'icon-calendar',
-            'url': '/escalas/'
+            'url': '/solicitacoes/',
+            'permissions': 'cliente.view_solicitacoes'
         },
         {
             'label':'Empresa' ,
             'icon':'icon-lock',
-            'models': ('empresa.Empresa','empresa.Colaborador','empresa.Area','empresa.Departamento')
+            'models': ('empresa.Empresa','empresa.Colaborador','empresa.Area','empresa.Departamento'),
+            'permissions': 'empresa.view_empresa'
         },
         {
             'label':'Clientes' ,
             'icon':'icon-lock',
-            'models': ('cliente.Cliente','cliente.PontoAlocacao','cliente.Turno')
+            'models': ('cliente.Cliente','cliente.PontoAlocacao','cliente.Turno'),
+            'permissions': 'cliente.view_cliente'
         },
         {
             'label': 'Configurações',
             'icon':'icon-cog',
-            'models': ('cliente.PerfilJornada','cliente.Turno','auth.user', 'auth.group', 'core.Configuracao', 'core.Cidade','core.Estado','core.Pais')
+            'models': ('cliente.PerfilJornada','cliente.Turno','auth.user', 'auth.group', 'core.Configuracao', 'core.Cidade','core.Estado','core.Pais'),
+            'permissions': 'auth.add_user'
         },
         {
             'label': 'DESENVOLVIMENTO',

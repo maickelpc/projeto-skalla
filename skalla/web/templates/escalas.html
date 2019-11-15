@@ -35,6 +35,8 @@
   .max-30{
     max-width: 30px;
   }
+
+  
 </style>
 
 
@@ -96,7 +98,7 @@
                 <table class="table">
                   <tr>
                     <td >
-                        <button v-if="escala.programada" class="btn btn-primary" v-on:click="abreModalAdicionarColaborador(escala, dia)" data-toggle="modal" data-target="#modalAdicionarColaborador" > <i class="icon-plus" style="color:white"></i> Adicionar Colaborador</button>
+                        <button v-if="escala.programada" class="btn btn-primary" v-on:click="abreModalAdicionarColaborador(escala, dia)" data-toggle="modal" data-target="#modalAdicionarColaborador" > <i class="icon-plus" style="color:white"></i>Colaborador</button>
                     </td>
                       <td colspan="4">
                         <button v-if="escala.programada" class="btn btn-danger" v-on:click="abreModalCancelarEscala(escala)" data-toggle="modal" data-target="#modalCancelarEscala" > <i class="icon-remove" style="color:white"></i> Cancelar Escala</button>
