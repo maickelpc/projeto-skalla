@@ -123,7 +123,7 @@ Vue.config.lang = 'pt-br';
 var app = new Vue({
   el: '#buscaescala',
   data: {
-      vuetify: new Vuetify(),
+      // vuetify: new Vuetify(),
       picker: new Date().toISOString().substr(0, 10),
 
       mensagemErro:'',
