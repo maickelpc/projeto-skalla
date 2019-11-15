@@ -44,30 +44,37 @@
 
                     <div class="search-container">
                     <table>
-                        <tr>
-                            <th>Código</th>
-                            <th>Data Inicial</th>
-                            <th>Data Final</th>
-                            <th>Status</th>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" v-model="filtroId" placeholder="Código da escala"></td>
-                            <td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td>
-                            <td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td>
+                      <tr>
+                        <td>Código</td>
+                        <td><input style="height: 30px;" type="text" v-model="filtroId" placeholder="Código da escala"></td>
+                      </tr>
+                      <tr>
+                        <td>Data Inicial</td>
+                        <td><input style="height: 30px;" type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td>
+                      </tr>
+                      <tr>
+                        <td>Data Final</td>
+                        <td><input style="height: 30px;" type="date" v-model="filtroDataFinal" placeholder="Data Final"></td>
+                      </tr>
+                      <tr>
+                        <td>Status</td>
+                        <td>
+                            <select style="height: 30px;" v-model="filtroStatus">
+                                <option value="-1">Todos</option>
+                                <option value="0">Pendente</option>
+                                <option value="1">Confirmado</option>
+                                <option value="4">Executado</option>
+                                <option value="3">Cancelado</option>
+                            </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="margin-top:10px"><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td>
+                        <td style="margin-top:10px"><button type="button" v-on:click="imprimir()" class="btn btn-info">Imprimir</button></td>
+                      </tr>
 
-                            <td>
-                                <select v-model="filtroStatus">
-                                    <option value="-1">Todos</option>
-                                    <option value="0">Pendente</option>
-                                    <option value="1">Confirmado</option>
-                                    <option value="4">Executado</option>
-                                    <option value="3">Cancelado</option>
-                                </select>
-                            </td>
-                            <td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td>
-                        </tr>
                     </table>
+
 
 
 

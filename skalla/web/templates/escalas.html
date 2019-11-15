@@ -59,14 +59,14 @@
       <div style="max-width: 100%">
 
         <table>
-          <tr><td>Código Escala</td><td><input type="text" v-model="filtroId" placeholder="Código da escala"></td></tr>
+          <tr><td>Código Escala</td><td><input style="height: 30px;" type="text" v-model="filtroId" placeholder="Código da escala"></td></tr>
           <!--                        <tr><td>Colaborador</td><td><select name="colaborador" v-model="filtroColaboradorId" id="id_colaborador" data-placeholder="Selecione um colaborador"></select></td></tr>-->
-          <tr><td>Cliente</td><td><select name="cliente" v-model="filtroClienteId" id="id_cliente" data-placeholder="Selecione um Cliente"></select></td></tr>
-          <tr><td>Ponto Alocação</td><td><select id="id_pontoalocacao" name="pontoAlocacao" v-model="filtroPontoAlocacaoId" data-placeholder="Selecione um Ponto de Alocação"></select></td></tr>
-          <tr><td>Data Inicial</td><td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td></tr>
-          <tr><td>Data Final</td><td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td></tr>
+          <tr><td>Cliente</td><td><select style="height: 30px;" name="cliente" v-model="filtroClienteId" id="id_cliente" data-placeholder="Selecione um Cliente"></select></td></tr>
+          <tr><td>Ponto Alocação</td><td><select style="height: 30px;" id="id_pontoalocacao" name="pontoAlocacao" v-model="filtroPontoAlocacaoId" data-placeholder="Selecione um Ponto de Alocação"></select></td></tr>
+          <tr><td>Data Inicial</td><td><input style="height: 30px;" type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td></tr>
+          <tr><td>Data Final</td><td><input style="height: 30px;" type="date" v-model="filtroDataFinal" placeholder="Data Final"></td></tr>
           <tr><td>Status</td><td>
-            <select v-model="filtroStatus">
+            <select style="height: 30px;" v-model="filtroStatus">
               <option value="-1" selected>Todos</option>
               <option value="0">Ativa</option>
               <option value="1">Cancelada</option>

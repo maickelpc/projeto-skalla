@@ -19,6 +19,8 @@ urlpatterns = [
     path('gestaoescalas/', webview.gestaoEscala),
     path('solicitacoes/', webview.solicitacoes),
     path('escalas/', webview.escalas),
+    path('imprimirescalas/', webview.imprimirEscalas),
+    path('imprimirescala/', webview.imprimirEscala),
     path('api/', include(RotasApi.rotasApi.urls)),
     path('admin/', admin.site.urls),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

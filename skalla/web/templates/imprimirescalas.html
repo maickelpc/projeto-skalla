@@ -1,0 +1,127 @@
+{% extends "layout/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block extrastyle %}
+
+
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'web/styles/loader.css' %}" media="all">
+{% endblock %}
+
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+{% block content %}
+<style>
+  .negrito{
+    font-weight: bold;
+  }
+
+  .escala-ativa{
+    background-color:green !important;
+  }
+
+  .escala-inativa{
+    background-color:gray !important;
+  }
+
+  .escala-cancelada{
+    background-color:red !important;
+  }
+
+  .max-30{
+    max-width: 30px;
+  }
+</style>
+
+
+<div id="buscaescala">
+
+  <div class="tela-inteira" v-if="carregando">
+    <div class="lds-hourglass"> </div>
+  </div>
+
+
+  <div class="alert alert-success" v-if="mensagemSucesso.length > 1">
+    <button class="close" data-dismiss="alert">x</button>
+    [[mensagemSucesso]]
+  </div>
+  <div class="alert alert-danger" v-if="mensagemErro.length > 1">
+    <button class="close" data-dismiss="alert">x</button>
+    [[mensagemErro]]
+  </div>
+  <div class="toolbar-content clearfix">
+    <div class="clearfix">
+      <h3>Selecione as opções</h3>
+      <div style="max-width: 100%">
+        <table>
+          <tr>
+            <td>Tipo de Impressão</td>
+            <td>
+              <select name="tipo" v-model="tipoImpressao" data-placeholder="Selecione um Tipo de Impressão">
+                <option value="empresa">Empresa</option>
+                <option value="cliente">Cliente</option>
+                <option value="ponto">Ponto de Alocação</option>
+              </select>
+            </td>
+          </tr>
+          <!-- <tr>
+            <td>Mostrar canceladas</td>
+            <td>
+              <input class="form-control" type="checkbox" v-model="mostrarCanceladas">
+            </td>
+          </tr> -->
+
+          <tr v-show="tipoImpressao === 'empresa' " ><td>Empresa</td><td><select style="height: 30px;" name="empresa"  @change="onChange()" id="id_empresa" data-placeholder="Selecione a empresa"></select></td></tr>
+          <tr v-show="tipoImpressao === 'colaborador' "><td>Colaborador</td><td><select name="colaborador" v-model="filtroColaboradorId" id="id_colaborador" data-placeholder="Selecione um colaborador"></select></td></tr>
+          <tr v-show="tipoImpressao === 'cliente' || tipoImpressao === 'ponto'" ><td>Cliente</td><td><select style="height: 30px;" name="cliente" v-model="filtroClienteId" id="id_cliente" data-placeholder="Selecione um Cliente"></select></td></tr>
+          <tr v-show="tipoImpressao === 'ponto'"  ><td>Ponto Alocação</td><td><select style="height: 30px;" id="id_pontoalocacao" name="pontoAlocacao" v-model="filtroPontoAlocacaoId" data-placeholder="Selecione um Ponto de Alocação"></select></td></tr>
+          <tr><td>Data Inicial</td><td><input style="height: 30px;" type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td></tr>
+          <tr><td>Data Final</td><td><input style="height: 30px;" type="date" v-model="filtroDataFinal" placeholder="Data Final"></td> </tr>
+
+          <tr>
+
+            <td> <button type="button" :disabled="formInvalid()" v-on:click="imprimir()" class="btn btn-info btn-block">Imprimir</button></td>
+          </tr>
+          <tr></tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div v-if="mensagemSucesso" id="content" class="flex row-fluid">
+    <div id="content-main">
+      <div class="inner-center-column" style="width: 125%">
+        <h1>[[mensagemSucesso]]</h1>
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="pagination-block">
+    <div class="pagination">
+
+      <ul class="pagination">
+
+        <li v-bind:class="{ active: pagina == paginacao.page }" v-for="pagina in paginacao.paginas" v-on:click="buscar(pagina)" ><a href="javascript:void(0)"> [[pagina]] </a></li>
+
+      </ul>
+    </div>
+  </div> -->
+
+</div>
+
+
+<script type="application/javascript">
+  var token = '{{csrf_token}}';
+  var userId = "{{request.user.id}}";
+</script>
+<script type="application/javascript" src="{% static 'web/imprimirescalas.js' %}"></script>
+
+{% endblock %}
