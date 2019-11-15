@@ -247,11 +247,11 @@ SUIT_CONFIG = {
             'models': ('cliente.PerfilJornada','cliente.Turno','auth.user', 'auth.group', 'core.Configuracao', 'core.Cidade','core.Estado','core.Pais'),
             'permissions': 'auth.add_user'
         },
-        {
-            'label': 'DESENVOLVIMENTO',
-            'icon':'icon-cog',
-            'models': ('cliente.Escala','cliente.EscalaColaborador')
-        },
+        # {
+        #     'label': 'DESENVOLVIMENTO',
+        #     'icon':'icon-cog',
+        #     'models': ('cliente.Escala','cliente.EscalaColaborador')
+        # },
     ),
 
     # misc
