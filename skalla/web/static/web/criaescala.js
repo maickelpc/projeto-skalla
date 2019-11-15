@@ -1,7 +1,4 @@
 $(document).ready(function(){
-    $('.adicionaColaborador').click(function(){
-        $("#modalColaboradores").modal("hide")
-    });
 });
 
 var app = new Vue({
@@ -84,7 +81,7 @@ var app = new Vue({
             this.escala.turnoPonto.pontoAlocacao = val;
         },
         turno: function(val) {
-            this.escala.turnoPonto.turno = val;
+            this.escala.turnoPonto = val;
         },
         perfil: function(val) {
             this.escala.perfil = val;
@@ -120,21 +117,41 @@ var app = new Vue({
     methods: {
         adicionaColaboradorEscala(colaborador) {
             this.escalaColaborador.colaborador = colaborador;
+            this.horasDesdeUltimaEscala(colaborador.id)
             this.escalaColaboradorList.push(this.escalaColaborador);
             this.escalaColaborador = {
                 dataInicio: null,
                 dataFim: null,
                 colaborador: {}
             };
-
+            // for(let i = 0; i < this.colaboradoresDisponiveis.length; i++) {
+            //     if(this.colaboradoresDisponiveis[i].id === colaborador.id) {
+            //         this.colaboradoresDisponiveis.splice(i, 1);
+            //     }
+            // }
             console.log(this.escalaColaboradorList);
         },
+        colaboradorEstaDisponivelData(colaborador, data) {
+            var disponivel = true;
+            data = moment(data);
+            for(let i = 0; i < this.escalaColaboradorList.length; i++) {
+                if((data.diff(moment(this.escalaColaboradorList[i].dataInicio), 'h') < this.turno.horasDescanso) &&
+                    (colaborador.id === this.escalaColaboradorList[i].colaborador.id)) {
+                    console.log(disponivel);
+                    disponivel = false;
+                }
+            }
+            return disponivel;
+        },
+        retornaColaboradoresDisponiveisData(data) {
+            return(this.colaboradoresDisponiveis.filter(
+                y => this.colaboradorEstaDisponivelData(y, data)
+            ));
+        },
         abreModalColaboradores(dataInicial, dia, horaInicio, horaFim) {
-            let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('DD/MM/YYYY');
+            let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('YYYY-MM-DD');
             this.escalaColaborador.dataInicio = moment(dataEscala + " " + horaInicio);
             this.escalaColaborador.dataFim = moment(dataEscala + " " + horaFim);
-            //this.escalaColaboradorList.push(escalaColaborador);
-            //console.log(this.escalaColaborador);
         },
         getIntervaloHoras: function(horaInicio, horaFim) {
             let inicio = moment(horaInicio, "HH:mm");
@@ -233,19 +250,37 @@ var app = new Vue({
                 this.carregando = false;
             });
         },
+        horasDesdeUltimaEscala(colaborador) {
+            let headers = {
+                'Content-Type': 'application/json',
+                "X-CSRFToken": token
+              };
+            this.$http.get(`/api/escala/horasdesdeultimaescala/?idcolaborador=`+colaborador)
+            .then( response =>  {
+                console.log(response.data)
+                this.mensagemSucesso = `Horas Recuperadas com sucesso.`;
+
+            }).catch( erro => {
+                this.mensagemErro = `Erro ao recuperar horas do colaborador.`;
+                console.log(erro);
+            })
+            .finally(() => {
+                this.carregando = false;
+            });
+        },
         dataEstaPeriodo(inicio, fim, dataCelula) {
             return moment(moment(dataCelula).add(1, 'm')).isBetween(inicio, fim);
         },
         colaboradoresDia: function(dia, hora){
-            let dataEscala = moment(this.escala.dataInicio).add(dia - 1, 'days').format('DD/MM/YYYY');
+            let dataEscala = moment(this.escala.dataInicio).add(dia - 1, 'days').format('YYYY-MM-DD');
             let horas = this.turno.turno.horaInicio.split(':');
             let horaEscala = moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm');
             let dataCelula = moment(dataEscala + ' ' + horaEscala);
             //console.log(this.escalaColaboradorList);
             return this.escalaColaboradorList.filter(
-                y => this.dataEstaPeriodo(y.dataInicio.format('DD/MM/YYYY HH:mm'),
-                                     y.dataFim.format('DD/MM/YYYY HH:mm'),
-                                     dataCelula.format('DD/MM/YYYY HH:mm'))
+                y => this.dataEstaPeriodo(y.dataInicio.format('YYYY-MM-DD HH:mm'),
+                                     y.dataFim.format('YYYY-MM-DD HH:mm'),
+                                     dataCelula.format('YYYY-MM-DD HH:mm'))
             );
         },
     }

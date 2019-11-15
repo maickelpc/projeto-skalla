@@ -68,7 +68,6 @@ class EscalaViewSet(viewsets.ModelViewSet):
 
         idTurno = int(dados['turnoPonto']['turno']['id'])
         idPontoAlocacao = int(dados['turnoPonto']['pontoAlocacao']['id'])
-
         try:
             escala = Escala()
             perfil = PerfilJornada.objects.get(id=idPerfilJornada)
@@ -94,8 +93,8 @@ class EscalaViewSet(viewsets.ModelViewSet):
                     escalaColaborador = EscalaColaborador()
                     escalaColaborador.escala = escala
                     escalaColaborador.colaborador = c
-                    escalaColaborador.dataInicio = datetime.datetime.strptime(colaborador['dataInicio'][:19], '%d/%m/%Y %H:%M:%S' )
-                    escalaColaborador.dataFim = datetime.datetime.strptime(colaborador['dataFim'][:19], '%d/%m/%Y %H:%M:%S')
+                    escalaColaborador.dataInicio = datetime.datetime.strptime(colaborador['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S')
+                    escalaColaborador.dataFim = datetime.datetime.strptime(colaborador['dataFim'][:19], '%Y-%m-%dT%H:%M:%S')
                     escalaColaborador.save()
 
             serializer = EscalaSerializer(escala)
@@ -396,3 +395,11 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=False)
+    def horasdesdeultimaescala(self, request):
+        idcolaborador = int(self.request.query_params.get('idcolaborador', None))
+        ultima = EscalaColaborador.objects.filter(colaborador=idcolaborador, status__in=[0,1], dataFim__isnull=False).latest('-dataFim')
+        agora = datetime.datetime.now()
+        horasDescanso = (agora - ultima['dataFim']) / 3600
+
+        return Response({'horas:':horasDescanso})
