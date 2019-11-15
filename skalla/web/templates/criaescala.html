@@ -19,6 +19,10 @@
     .negrito{
         font-weight: bold;
     }
+    .warning-colaborador {
+        color:red;
+        background-color: #f0f0f0;
+    }
 </style>
 
 
@@ -123,10 +127,25 @@
 {#            <p v-for="c in colaboradoresDisponiveis" >#}
 {#                [[ c.first_name ]] [[ c.last_name ]] <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a>#}
 {#            </p>#}
+              <table style="width:100%;">
+                  <thead>
+                    <th>Colaborador</th>
+                    <th>Ação</th>
+                  </thead>
+                  <tbody>
+                    <tr v-for="c in retornaColaboradoresDisponiveisData(escalaColaborador.dataInicio)">
+                        <td>
+                            <strong>[[ c.first_name ]] [[ c.last_name ]]</strong> [[ c.horasDescanso ]] [[ turno.turno.horasDescanso ]]
+                            <p class="warning-colaborador" v-if="c.horasDescanso < turno.turno.horasDescanso">CUIDADO! Esse colaborador está em período de descanso.</p>
+                        </td>
+                        <td>
+                            <a v-on:click="adicionaColaboradorEscala(c)"
+                               class="btn btn-primary">Adicionar</a>
 
-              <p v-for="c in retornaColaboradoresDisponiveisData(escalaColaborador.dataInicio)" >
-                [[ c.first_name ]] [[ c.last_name ]]  <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a> <span class="warning" v-if="c.horasDescanso < turno.turno.horasDescanso">CUIDADO! Esse colaborador está em período de descanso.</span>
-            </p>
+                        </td>
+                    </tr>
+                  </tbody>
+              </table>
           </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
