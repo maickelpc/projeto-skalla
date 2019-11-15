@@ -70,6 +70,7 @@ var app = new Vue({
         this.getColaboradores();
         this.getPerfisJornada();
         this.getClientes();
+
     },
     watch: {
         cliente: function(val) {
@@ -159,11 +160,12 @@ var app = new Vue({
 
             return fim.diff(inicio, 'hours');
         },
-        getColaboradores: function() {
+        async getColaboradores() {
           this.loading = true;
           this.$http.get('/api/colaborador/')
               .then((response) => {
                 this.colaboradoresDisponiveis = response.data.results;
+                this.setHorasDescansoColaboradores();
                 this.loading = false;
               })
               .catch((err) => {
@@ -171,6 +173,14 @@ var app = new Vue({
                console.log(err);
               })
          },
+        setHorasDescansoColaboradores() {
+            for(let i = 0; i < this.colaboradoresDisponiveis.length; i++) {
+                this.horasDesdeUltimaEscala(
+                    this.colaboradoresDisponiveis[i]
+                );
+            }
+            console.log(this.colaboradoresDisponiveis);
+        },
         getPerfisJornada: function() {
           this.loading = true;
           this.$http.get('/api/perfil-jornada/')
@@ -250,18 +260,21 @@ var app = new Vue({
                 this.carregando = false;
             });
         },
-        horasDesdeUltimaEscala(colaborador) {
+        horasDesdeUltimaEscala(colaborador){
             let headers = {
                 'Content-Type': 'application/json',
                 "X-CSRFToken": token
               };
-            this.$http.get(`/api/escala/horasdesdeultimaescala/?idcolaborador=`+colaborador)
+            this.$http.get(`/api/escala-colaborador/horasdesdeultimaescala/?idcolaborador=`+colaborador.id)
             .then( response =>  {
-                console.log(response.data)
-                this.mensagemSucesso = `Horas Recuperadas com sucesso.`;
+                resposta = response.data;
+                console.log(resposta);
+                colaborador.horasDescanso = resposta.horasDescanso >= 0 ? resposta.horasDescanso : 0;
+                //this.mensagemSucesso = `Horas Recuperadas com sucesso.`;
 
             }).catch( erro => {
-                this.mensagemErro = `Erro ao recuperar horas do colaborador.`;
+                //this.mensagemErro = `Erro ao recuperar horas do colaborador.`;
+                colaborador.horasDescanso = 0;
                 console.log(erro);
             })
             .finally(() => {
@@ -276,7 +289,6 @@ var app = new Vue({
             let horas = this.turno.turno.horaInicio.split(':');
             let horaEscala = moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm');
             let dataCelula = moment(dataEscala + ' ' + horaEscala);
-            //console.log(this.escalaColaboradorList);
             return this.escalaColaboradorList.filter(
                 y => this.dataEstaPeriodo(y.dataInicio.format('YYYY-MM-DD HH:mm'),
                                      y.dataFim.format('YYYY-MM-DD HH:mm'),

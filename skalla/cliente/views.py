@@ -4,6 +4,7 @@ from django.utils import timezone
 import datetime
 import json
 import pytz
+from pytz import timezone as py_timezone
 from django.db import transaction
 from django.shortcuts import render
 from rest_framework.parsers import JSONParser
@@ -65,6 +66,7 @@ class EscalaViewSet(viewsets.ModelViewSet):
         # maickel
         dados = request.data
         idPerfilJornada = int(dados['perfil']['id'])
+        tz = py_timezone('America/Sao_Paulo')
 
         idTurno = int(dados['turnoPonto']['turno']['id'])
         idPontoAlocacao = int(dados['turnoPonto']['pontoAlocacao']['id'])
@@ -75,8 +77,9 @@ class EscalaViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 escala.perfil = perfil
                 escala.turnoPonto = turnoPonto
-                escala.dataInicio = pytz.utc.localize(datetime.datetime.strptime(dados['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S'))
-                escala.dataFim = pytz.utc.localize(datetime.datetime.strptime(dados['dataFim'][:19], '%Y-%m-%dT%H:%M:%S'))
+
+                escala.dataInicio = tz.localize(datetime.datetime.strptime(dados['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S'))
+                escala.dataFim = tz.localize(datetime.datetime.strptime(dados['dataFim'][:19], '%Y-%m-%dT%H:%M:%S'))
 
                 if perfil.duplicar:
                     escala.dataDuplicacao = escala.dataFim + datetime.timedelta(hours=-perfil.horasAntecedenciaDuplicacao)
@@ -93,8 +96,8 @@ class EscalaViewSet(viewsets.ModelViewSet):
                     escalaColaborador = EscalaColaborador()
                     escalaColaborador.escala = escala
                     escalaColaborador.colaborador = c
-                    escalaColaborador.dataInicio = datetime.datetime.strptime(colaborador['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S')
-                    escalaColaborador.dataFim = datetime.datetime.strptime(colaborador['dataFim'][:19], '%Y-%m-%dT%H:%M:%S')
+                    escalaColaborador.dataInicio = tz.localize(datetime.datetime.strptime(colaborador['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S'))
+                    escalaColaborador.dataFim = tz.localize(datetime.datetime.strptime(colaborador['dataFim'][:19], '%Y-%m-%dT%H:%M:%S'))
                     escalaColaborador.save()
 
             serializer = EscalaSerializer(escala)
@@ -395,11 +398,12 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+
     @action(methods=['get'], detail=False)
     def horasdesdeultimaescala(self, request):
         idcolaborador = int(self.request.query_params.get('idcolaborador', None))
-        ultima = EscalaColaborador.objects.filter(colaborador=idcolaborador, status__in=[0,1], dataFim__isnull=False).latest('-dataFim')
-        agora = datetime.datetime.now()
-        horasDescanso = (agora - ultima['dataFim']) / 3600
+        ultima = EscalaColaborador.objects.filter(colaborador=idcolaborador).latest('-dataFim')
+        agora = datetime.datetime.now(timezone.utc)
+        horasDescanso = agora - ultima.dataFim
 
-        return Response({'horas:':horasDescanso})
+        return Response({'horasDescanso':int(horasDescanso.seconds / 3600)})

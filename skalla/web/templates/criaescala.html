@@ -119,13 +119,13 @@
             </button>
           </div>
           <div class="modal-body" v-if="escalaColaborador.dataInicio && escalaColaborador.dataFim">
-            Adicionar Colaborador em [[ escalaColaborador.dataInicio | moment ]] - [[ escalaColaborador.dataFim | moment ]]. <br/>
+            Adicionar Colaborador em [[ escalaColaborador.dataInicio | moment ]] até <br/> [[ escalaColaborador.dataFim | moment ]]. <br/>
 {#            <p v-for="c in colaboradoresDisponiveis" >#}
 {#                [[ c.first_name ]] [[ c.last_name ]] <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a>#}
 {#            </p>#}
 
               <p v-for="c in retornaColaboradoresDisponiveisData(escalaColaborador.dataInicio)" >
-                [[ c.first_name ]] [[ c.last_name ]] <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a>
+                [[ c.first_name ]] [[ c.last_name ]]  <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a> <span class="warning" v-if="c.horasDescanso < turno.turno.horasDescanso">CUIDADO! Esse colaborador está em período de descanso.</span>
             </p>
           </div>
             <div class="modal-footer">
