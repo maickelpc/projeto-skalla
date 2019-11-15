@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</head>
+<body style="width:1191px; max-height:1684px ">
+
+  <table class="table table-striped" style="padding: 71px">
+    <thead>
+      <tr>
+        <th><img  style="max-width: 250px" src="/media/{{ empresa.logo}}" class="img-fluid" alt="Responsive image"></img></th>
+        <th colspan="3"><h1>Escalas de Trabalho - {{empresa}}<h1></th>
+        </tr>
+        <tr>
+          <th scope="row">Data início</th>
+          <th scope="row">Data Final</th>
+          <th scope="row">Impressão</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td scope="row">{{datainicial | date:"d/m/Y"}}</td>
+          <td scope="row">{{datafinal | date:"d/m/Y"}}</td>
+          <td scope="row">{{agora | date:"d/m/Y H:i:s"}}</td>
+        </tr>
+
+        <tr>
+          <td colspan="5">
+
+
+
+
+
+            {% for escalas in datas %}
+
+
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th class="text-center" colspan="6">
+                    <p style="background-color: darkgray; font-size: larger;">{{escalas.data | date:"l, d/m/Y" }}
+                      {% if escalas.escalas.count == 0 %} - Nenhuma escala programada {% endif %}
+                      <p>
+                    </th>
+                  </tr>
+                  {% if escalas.escalas.count > 0  %}
+
+                  <tr>
+                    <th scope="row">Hora de Entrada</th>
+                    <th scope="row">Hora de Saída</th>
+                    <th scope="row">Perfil</th>
+                    <th scope="row">Colaborador</th>
+                    <th scope="row">Cliente</th>
+                    <th scope="row">Ponto de Alocação</th>
+
+
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for escala in escalas.escalas %}
+
+                  <tr>
+                    <td scope="row"><strong>{{escala.dataInicio | date:"H:i" }}h</strong></td>
+                    <td scope="row"><strong>{{escala.dataFim | date:"H:i" }}h</string></td>
+                      <td scope="row">{{escala.escala.perfil.descricao }}</td>
+                    <td scope="row">{{escala.colaborador.first_name}} {{escala.colaborador.last_name}}</td>
+                    <td scope="row">{{escala.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia}}</td>
+                    <td scope="row">{{escala.escala.turnoPonto.pontoAlocacao.nome}} / {{escala.escala.turnoPonto.pontoAlocacao.descricao}} </td>
+
+                  </tr>
+                  {% endfor %}
+
+                  {% endif %}
+
+                  <tr>
+                  </tbody>
+                </table>
+
+                {% endfor %}
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      </body>
+      </html>

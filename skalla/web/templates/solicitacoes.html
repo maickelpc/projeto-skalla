@@ -43,35 +43,38 @@
                 <div style="max-width: 100%">
 
                     <table>
-                        <tr>
-                            <th>Escala</th>
-                            <th>Colaborador</th>
-                            <th>Data Inicial</th>
-                            <th>Data Final</th>
-                            <th>Status Solicitação</th>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" v-model="filtroId" placeholder="Código da escala"></td>
-                            <td>
+                      <tr>
+                        <td>Escala</td>
+                        <td><input style="height: 30px;" type="text" v-model="filtroId" placeholder="Código da escala"></td>
+                      </tr>
+                      <tr>
+                        <td>Colaborador</td>
+                        <td><select style="height: 30px;" name="colaborador" v-model="filtroColaboradorId" id="id_colaborador" data-placeholder="Selecione um colaborador"> </select> </td>
+                      </tr>
+                      <tr>
+                        <td>Data Inicial</td>
+                        <td><input style="height: 30px;" type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td>
+                      </tr>
+                      <tr>
+                        <td>Data Final</td>
+                        <td><input style="height: 30px;" type="date" v-model="filtroDataFinal" placeholder="Data Final"></td>
+                      </tr>
+                      <tr>
+                        <td>Status Solicitação</td>
+                        <td>
+                            <select style="height: 30px;" v-model="filtroStatus">
+                                <option value="0" >Todos</option>
+                                <option value="1" selected>Pendente</option>
+                                <option value="2">Aceito</option>
+                                <option value="3">Recusado</option>
+                            </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td>
+                      </tr>
 
-                                <select name="colaborador" v-model="filtroColaboradorId" id="id_colaborador" data-placeholder="Selecione um colaborador">
-
-                                </select>
-
-                            </td>
-                            <td><input type="date" v-model="filtroDataInicial" placeholder="Data Inicial"></td>
-                            <td><input type="date" v-model="filtroDataFinal" placeholder="Data Final"></td>
-                            <td>
-                                <select v-model="filtroStatus">
-                                    <option value="0" >Todos</option>
-                                    <option value="1" selected>Pendente</option>
-                                    <option value="2">Aceito</option>
-                                    <option value="3">Recusado</option>
-                                </select>
-                            </td>
-                            <td><button type="button" v-on:click="buscar(1)" class="btn btn-info">Filtrar</button></td>
-                        </tr>
                     </table>
 
                 </div>
@@ -272,4 +275,3 @@
 <script type="application/javascript" src="{% static 'web/solicitacoes.js' %}"></script>
 
 {% endblock %}
-

@@ -205,6 +205,11 @@ SUIT_CONFIG = {
             'url': '/minhaescala/'
         },
         {
+            'label': 'Imprimir Escalas',
+            'icon':'icon-list',
+            'url': '/imprimirescalas/'
+        },
+        {
             'label': 'Solicitações',
             'icon':'icon-envelope',
             'url': '/solicitacoes/'
@@ -239,4 +244,3 @@ SUIT_CONFIG = {
     # misc
     # 'LIST_PER_PAGE': 15
 }
-

@@ -31,6 +31,13 @@ var app = new Vue({
   },
   methods: {
 
+    imprimir: function(){
+      let url = `/imprimirminhaescala/?dataInicial=${this.filtroDataInicial}&dataFinal=${this.filtroDataFinal}`;
+
+      let win = window.open(url, '_blank');
+      win.focus();
+    },
+
     buscar: function(pagina = null) {
 
         if(pagina){

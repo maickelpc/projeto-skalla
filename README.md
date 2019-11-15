@@ -7,6 +7,7 @@ pip install Pillow
 pip install django-suit
 pip install python-decouple
 pip install psycopg2-binary
+pip install --pre xhtml2pdf
 pip install django-cors-headers
 pip install reportlab
 pip install djangorestframework
