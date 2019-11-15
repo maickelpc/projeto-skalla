@@ -58,6 +58,9 @@ def imprimirMinhaEscala(request):
     # return html2pdf('imprimirminhaescala.html', params)
     return render(request, 'imprimirminhaescala.html', params)
 
+@login_required(login_url='/admin/login')
+def index(request):
+    return render(request, 'index.html', {})
 
 @login_required(login_url='/admin/login')
 def criaEscala(request):

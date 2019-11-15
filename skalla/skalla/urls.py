@@ -12,7 +12,7 @@ from django.conf.urls.static import static
 from web import views as webview
 
 urlpatterns = [
-    path('', webview.criaEscala),
+    path('', webview.index),
     path('criaescala/', webview.criaEscala),
     path('minhaescala/', webview.minhaEscala),
     path('imprimirminhaescala/', webview.imprimirMinhaEscala),
