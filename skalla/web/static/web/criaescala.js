@@ -274,7 +274,7 @@ var app = new Vue({
 
             }).catch( erro => {
                 //this.mensagemErro = `Erro ao recuperar horas do colaborador.`;
-                colaborador.horasDescanso = 0;
+                colaborador.horasDescanso = 1000;
                 console.log(erro);
             })
             .finally(() => {
