@@ -401,9 +401,12 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def horasdesdeultimaescala(self, request):
+        tz = py_timezone('America/Sao_Paulo')
         idcolaborador = int(self.request.query_params.get('idcolaborador', None))
-        ultima = EscalaColaborador.objects.filter(colaborador=idcolaborador).latest('-dataFim')
-        agora = datetime.datetime.now(timezone.utc)
-        horasDescanso = agora - ultima.dataFim
+        novahora = self.request.query_params.get('data', None)
+        novahora = tz.localize(datetime.datetime.strptime(novahora, '%Y-%m-%d %H:%M:%S'))
+        ultima = EscalaColaborador.objects.filter(colaborador=idcolaborador, dataFim__isnull=False, status__in=[0,1]).latest('dataFim')
+        horasDescanso = novahora - ultima.dataFim
+        horas = (horasDescanso.days * 24) + (horasDescanso.seconds // 3600)
 
-        return Response({'horasDescanso':int(horasDescanso.seconds / 3600)})
+        return Response({'horasDescanso':horas})

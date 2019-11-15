@@ -149,10 +149,13 @@ var app = new Vue({
                 y => this.colaboradorEstaDisponivelData(y, data)
             ));
         },
-        abreModalColaboradores(dataInicial, dia, horaInicio, horaFim) {
+        abreModalColaboradores(dataInicial, dia, horaInicio, horaFim, hora) {
             let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('YYYY-MM-DD');
             this.escalaColaborador.dataInicio = moment(dataEscala + " " + horaInicio);
             this.escalaColaborador.dataFim = moment(dataEscala + " " + horaFim);
+            horas = horaInicio.split(':');
+            horaInicioCalc =  moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm:ss');
+            this.setHorasDescansoColaboradores(dataEscala + " " + horaInicioCalc);
         },
         getIntervaloHoras: function(horaInicio, horaFim) {
             let inicio = moment(horaInicio, "HH:mm");
@@ -160,12 +163,13 @@ var app = new Vue({
 
             return fim.diff(inicio, 'hours');
         },
-        async getColaboradores() {
+        getColaboradores() {
           this.loading = true;
           this.$http.get('/api/colaborador/')
               .then((response) => {
                 this.colaboradoresDisponiveis = response.data.results;
-                this.setHorasDescansoColaboradores();
+                for(let i = 0; i < this.colaboradoresDisponiveis.length; i++)
+                    this.colaboradoresDisponiveis[i].horasDescanso = null;
                 this.loading = false;
               })
               .catch((err) => {
@@ -173,11 +177,20 @@ var app = new Vue({
                console.log(err);
               })
          },
-        setHorasDescansoColaboradores() {
+        setHorasDescansoColaboradores(data) {
             for(let i = 0; i < this.colaboradoresDisponiveis.length; i++) {
-                this.horasDesdeUltimaEscala(
-                    this.colaboradoresDisponiveis[i]
-                );
+                if(this.colaboradoresDisponiveis[i].horasDescanso === null) {
+                    this.horasDesdeUltimaEscala(
+                        this.colaboradoresDisponiveis[i], data
+                    );
+                } else {
+                    for(let x = 0; x < this.escalaColaboradorList.length; x++) {
+                        if(this.colaboradoresDisponiveis[i].id == this.escalaColaboradorList[x].colaborador.id) {
+                            data = moment(data);
+                            this.colaboradoresDisponiveis[i].horasDescanso = data.diff(moment(this.escalaColaboradorList[x].dataFim), 'h');
+                        }
+                    }
+                }
             }
             console.log(this.colaboradoresDisponiveis);
         },
@@ -250,7 +263,8 @@ var app = new Vue({
             this.escala.escalaColaboradorList = this.escalaColaboradorList;
             this.$http.post(`/api/escala/`, this.escala, {headers})
             .then( response =>  {
-              this.mensagemSucesso = `Escala salva com sucesso.`;
+              alert(`Escala salva com sucesso.`);
+              location.reload();
 
             }).catch( erro => {
                 this.mensagemErro = `Erro ao registrar escala`;
@@ -260,12 +274,12 @@ var app = new Vue({
                 this.carregando = false;
             });
         },
-        horasDesdeUltimaEscala(colaborador){
+        horasDesdeUltimaEscala(colaborador, dataescala){
             let headers = {
                 'Content-Type': 'application/json',
                 "X-CSRFToken": token
               };
-            this.$http.get(`/api/escala-colaborador/horasdesdeultimaescala/?idcolaborador=`+colaborador.id)
+            this.$http.get(`/api/escala-colaborador/horasdesdeultimaescala/?idcolaborador=`+colaborador.id+`&data=`+dataescala)
             .then( response =>  {
                 resposta = response.data;
                 console.log(resposta);

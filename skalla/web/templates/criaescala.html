@@ -102,7 +102,7 @@
                           </ul>
                           <br/>
                             <a style="cursor: pointer;" v-on:click="abreModalColaboradores(
-                                            dataInicio, p, turno.turno.horaInicio, turno.turno.horaFim)"
+                                            dataInicio, p, (turno.turno.horaInicio), turno.turno.horaFim, i)"
                                             data-toggle="modal" data-target="#modalColaboradores">Adicionar Colaborador</a>
 
                       </td>
@@ -123,10 +123,7 @@
             </button>
           </div>
           <div class="modal-body" v-if="escalaColaborador.dataInicio && escalaColaborador.dataFim">
-            Adicionar Colaborador em [[ escalaColaborador.dataInicio | moment ]] até <br/> [[ escalaColaborador.dataFim | moment ]]. <br/>
-{#            <p v-for="c in colaboradoresDisponiveis" >#}
-{#                [[ c.first_name ]] [[ c.last_name ]] <a v-on:click="adicionaColaboradorEscala(c)" class="btn btn-primary">Adicionar</a>#}
-{#            </p>#}
+            Adicionar Colaborador em [[ escalaColaborador.dataInicio ]] até <br/> [[ escalaColaborador.dataFim ]]. <br/>
               <table style="width:100%;">
                   <thead>
                     <th>Colaborador</th>
