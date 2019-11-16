@@ -67,7 +67,7 @@ var app = new Vue({
     },
     delimiters: ["[[", "]]"],
     mounted: function () {
-        this.getColaboradores();
+        this.getColaboradores('');
         this.getPerfisJornada();
         this.getClientes();
 
@@ -97,6 +97,7 @@ var app = new Vue({
         dataInicio: function(val) {
             moment.locale('pt-BR');
             this.escala.dataInicio = moment(val, 'YYYY-MM-DD');
+            this.getColaboradores(moment(val, 'YYYY-MM-DD'));
             this.escala.dataFim = moment(val, 'YYYY-MM-DD');
             this.escala.dataFim.add((this.escala.perfil.dias - 1), 'd');
             //console.log(this.escala);
@@ -167,9 +168,10 @@ var app = new Vue({
 
             return fim.diff(inicio, 'hours');
         },
-        getColaboradores() {
+        getColaboradores(data) {
           this.loading = true;
-          let dataEscala = moment().format('YYYY-MM-DD');
+          data = data.length > 0 ? data : moment();
+          let dataEscala = moment(data).format('YYYY-MM-DD');
           this.$http.get('/api/colaborador/?data='+dataEscala)
               .then((response) => {
                 this.colaboradoresDisponiveis = response.data.results;
