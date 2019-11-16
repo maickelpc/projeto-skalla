@@ -83,6 +83,7 @@ var app = new Vue({
         },
         turno: function(val) {
             this.escala.turnoPonto = val;
+            this.setHorasDescansoColaboradores(moment(this.escala.dataInicio).format('YYYY-MM-DD') + " " + this.turno.turno.horaInicio);
         },
         perfil: function(val) {
             this.escala.perfil = val;
@@ -149,13 +150,16 @@ var app = new Vue({
                 y => this.colaboradorEstaDisponivelData(y, data)
             ));
         },
-        abreModalColaboradores(dataInicial, dia, horaInicio, horaFim, hora) {
-            let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('YYYY-MM-DD');
-            this.escalaColaborador.dataInicio = moment(dataEscala + " " + horaInicio);
-            this.escalaColaborador.dataFim = moment(dataEscala + " " + horaFim);
+        abreModalColaboradores(dataInicial, dia, horaInicio, turno, hora) {
             horas = horaInicio.split(':');
             horaInicioCalc =  moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm:ss');
+            let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('YYYY-MM-DD');
+            this.escalaColaborador.dataInicio = moment(dataEscala + " " + horaInicioCalc);
+
+            horaFimCalc = moment(this.escalaColaborador.dataInicio).add(turno.horasTrabalhadas, 'h').format('HH:mm:ss');
+            this.escalaColaborador.dataFim = moment(dataEscala + " " + horaFimCalc);
             this.setHorasDescansoColaboradores(dataEscala + " " + horaInicioCalc);
+            console.log(this.escalaColaborador);
         },
         getIntervaloHoras: function(horaInicio, horaFim) {
             let inicio = moment(horaInicio, "HH:mm");

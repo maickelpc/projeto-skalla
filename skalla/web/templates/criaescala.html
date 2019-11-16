@@ -102,7 +102,7 @@
                           </ul>
                           <br/>
                             <a style="cursor: pointer;" v-on:click="abreModalColaboradores(
-                                            dataInicio, p, (turno.turno.horaInicio), turno.turno.horaFim, i)"
+                                            dataInicio, p, (turno.turno.horaInicio), turno.turno, i)"
                                             data-toggle="modal" data-target="#modalColaboradores">Adicionar Colaborador</a>
 
                       </td>
@@ -132,7 +132,7 @@
                   <tbody>
                     <tr v-for="c in retornaColaboradoresDisponiveisData(escalaColaborador.dataInicio)">
                         <td>
-                            <strong>[[ c.first_name ]] [[ c.last_name ]]</strong> [[ c.horasDescanso ]] [[ turno.turno.horasDescanso ]]
+                            <strong>[[ c.first_name ]] [[ c.last_name ]]</strong>
                             <p class="warning-colaborador" v-if="c.horasDescanso < turno.turno.horasDescanso">CUIDADO! Esse colaborador está em período de descanso.</p>
                         </td>
                         <td>
