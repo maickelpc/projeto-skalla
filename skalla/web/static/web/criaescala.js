@@ -152,7 +152,7 @@ var app = new Vue({
         },
         abreModalColaboradores(dataInicial, dia, horaInicio, turno, hora) {
             horas = horaInicio.split(':');
-            horaInicioCalc =  moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm:ss');
+            horaInicioCalc = moment({hour: horas[0], minute: horas[1]}).add(hora, 'h').format('HH:mm:ss');
             let dataEscala = moment(dataInicial).add(dia - 1, 'days').format('YYYY-MM-DD');
             this.escalaColaborador.dataInicio = moment(dataEscala + " " + horaInicioCalc);
 
@@ -169,7 +169,8 @@ var app = new Vue({
         },
         getColaboradores() {
           this.loading = true;
-          this.$http.get('/api/colaborador/')
+          let dataEscala = moment().format('YYYY-MM-DD');
+          this.$http.get('/api/colaborador/?data='+dataEscala)
               .then((response) => {
                 this.colaboradoresDisponiveis = response.data.results;
                 for(let i = 0; i < this.colaboradoresDisponiveis.length; i++)

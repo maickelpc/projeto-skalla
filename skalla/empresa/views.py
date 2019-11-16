@@ -25,7 +25,6 @@ class ColaboradorViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         data = self.request.query_params.get('data', None)
-
         queryset = Colaborador.objects.order_by('first_name').all()
         if data:
             dia = datetime.datetime.strptime(data, '%Y-%m-%d') + timedelta(hours=0)
