@@ -96,8 +96,13 @@ class EscalaViewSet(viewsets.ModelViewSet):
                     escalaColaborador = EscalaColaborador()
                     escalaColaborador.escala = escala
                     escalaColaborador.colaborador = c
+                    print("COLABORADOR DATA DE INICIO")
+                    print(colaborador['dataInicio'])
                     escalaColaborador.dataInicio = tz.localize(datetime.datetime.strptime(colaborador['dataInicio'][:19], '%Y-%m-%dT%H:%M:%S'))
                     escalaColaborador.dataFim = tz.localize(datetime.datetime.strptime(colaborador['dataFim'][:19], '%Y-%m-%dT%H:%M:%S'))
+
+                    print(escalaColaborador.dataInicio)
+
                     escalaColaborador.save()
 
             serializer = EscalaSerializer(escala)
@@ -347,7 +352,9 @@ class EscalaColaboradorViewSet(viewsets.ModelViewSet):
         print(escala['id'])
         escalaColaborador = EscalaColaborador.objects.filter(id=int(escala['id'])).get()
 
-        escalaColaborador.statusSolicitacao = escala['statusSolicitacao'];
+        escalaColaborador.statusSolicitacao = int(escala['statusSolicitacao']);
+        if( escalaColaborador.statusSolicitacao == 2):
+            escalaColaborador.status = 3
         escalaColaborador.dataRetornoSolicitacaoAlteracao = datetime.datetime.now()
         escalaColaborador.retornoSolicitacao = escala['retornoSolicitacao'];
 

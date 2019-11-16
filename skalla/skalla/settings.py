@@ -227,7 +227,7 @@ SUIT_CONFIG = {
             'label': 'Solicitações',
             'icon':'icon-envelope',
             'url': '/solicitacoes/',
-            'permissions': 'cliente.view_solicitacoes'
+            'permissions': 'cliente.add_escala  '
         },
         {
             'label':'Empresa' ,
