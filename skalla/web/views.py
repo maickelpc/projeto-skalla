@@ -50,7 +50,7 @@ def imprimirMinhaEscala(request):
     dFinal = dataFinal + dt.timedelta(hours=23)
 
     c = request.user.id
-    escalas = EscalaColaborador.objects.filter(colaborador=c).filter(dataInicio__gt=dInicial,dataInicio__lt=dFinal).order_by('dataInicio').all()
+    escalas = EscalaColaborador.objects.filter(colaborador=c).filter(status__in=[0,1]).filter(dataInicio__gt=dInicial,dataInicio__lt=dFinal).order_by('dataInicio').all()
     colaborador = escalas[0].colaborador
 
     params = { 'escalas': escalas, 'colaborador': colaborador, 'datainicial': dataInicial, 'datafinal': dataFinal, 'agora': dt.datetime.now()}
