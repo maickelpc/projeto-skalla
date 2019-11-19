@@ -239,7 +239,7 @@ SUIT_CONFIG = {
             'label':'Clientes' ,
             'icon':'icon-lock',
             'models': ('cliente.Cliente','cliente.PontoAlocacao','cliente.Turno'),
-            'permissions': 'cliente.view_cliente'
+            'permissions': 'cliente.add_cliente'
         },
         {
             'label': 'Configurações',
