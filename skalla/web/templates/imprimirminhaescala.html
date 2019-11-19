@@ -57,8 +57,8 @@
                   <td scope="row">{{escala.dataFim | date:"l" }}<br>{{escala.dataFim | date:"d/b/Y H:i" }}h</td>
                   <td scope="row">{{escala.escala.turnoPonto.pontoAlocacao.cliente.nomeFantasia}}</td>
                   <td scope="row">{{escala.escala.turnoPonto.pontoAlocacao.nome}} / {{escala.escala.turnoPonto.pontoAlocacao.descricao}} </td>
-                  <td scope="row">{{escala.escala.turnoPonto.ponactoAlocacao.logradouro}},{{escala.escala.turnoPonto.pontoAlocacao.numero}} - {{escala.escala.turnoPonto.pontoAlocacao.bairro}} - {{escala.escala.turnoPonto.pontoAlocacao.cidade.nome}} </td>
-                  <td scope="row">{{escala.escala.turnoPonto.pontoAlocacao.referencia}} </td>
+                  <td scope="row">{{escala.escala.turnoPonto.pontoAlocacao.logradouro}},{{escala.escala.turnoPonto.pontoAlocacao.numero}} - {{escala.escala.turnoPonto.pontoAlocacao.bairro}} - {{escala.escala.turnoPonto.pontoAlocacao.cidade.nome}} </td>
+                  <td scope="row">{{escala.escala.turnoPonto.pontoAlocacao.referencia || ''}} </td>
                 </tr>
                 {% endfor %}
                 <tr>
