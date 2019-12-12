@@ -136,9 +136,7 @@
                             <p class="warning-colaborador" v-if="c.horasDescanso < turno.turno.horasDescanso">CUIDADO! Esse colaborador está em período de descanso.</p>
                         </td>
                         <td>
-                            <a v-on:click="adicionaColaboradorEscala(c)"
-                               class="btn btn-primary">Adicionar</a>
-
+                            <a v-on:click="adicionaColaboradorEscala(c)" style="text-underline: none;">Adicionar</a>
                         </td>
                     </tr>
                   </tbody>

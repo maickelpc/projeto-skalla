@@ -127,12 +127,6 @@ var app = new Vue({
                 dataFim: null,
                 colaborador: {}
             };
-            // for(let i = 0; i < this.colaboradoresDisponiveis.length; i++) {
-            //     if(this.colaboradoresDisponiveis[i].id === colaborador.id) {
-            //         this.colaboradoresDisponiveis.splice(i, 1);
-            //     }
-            // }
-            console.log(this.escalaColaboradorList);
         },
         colaboradorEstaDisponivelData(colaborador, data) {
             var disponivel = true;
